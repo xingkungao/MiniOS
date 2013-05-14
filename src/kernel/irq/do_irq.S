@@ -23,6 +23,7 @@
 .globl irqall; irqall:  pushl $0;  pushl   $-1; jmp trap
 
 .extern irq_handle
+.extern current
 
 trap:
 	cli
@@ -38,7 +39,9 @@ trap:
 
 	pushl %esp
 	call irq_handle
-	addl $4, %esp
+
+	movl (current), %esi
+	movl (%esi), %esp
 	
 	popal
 	popl %gs
