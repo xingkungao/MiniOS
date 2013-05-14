@@ -1,0 +1,241 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ASFLAGS	Makefile	/^ASFLAGS = -m32 -MD -I.\/include$/;"	m
+CC	Makefile	/^CC      = gcc$/;"	m
+CFILES	Makefile	/^CFILES  = $(shell find src\/ -name "*.c")$/;"	m
+CFLAGS	Makefile	/^CFLAGS  = -m32 -static -ggdb -MD -Wall -Werror -I.\/include -O2 \\$/;"	m
+CR0_PE	include/x86.h	23;"	d
+CR0_PG	include/x86.h	24;"	d
+DPL_KERN	include/x86.h	5;"	d
+DPL_USER	include/x86.h	6;"	d
+ELFHeader	boot/boot.h	/^struct ELFHeader {$/;"	s
+FALSE	include/const.h	5;"	d
+FL_IF	include/x86.h	20;"	d
+FL_TF	include/x86.h	19;"	d
+GATE	include/x86.h	126;"	d
+GDT_ENTRY	boot/asm.h	2;"	d
+GateDesc	include/x86.h	/^struct GateDesc {$/;"	s
+GateDesc	include/x86.h	/^typedef struct GateDesc GateDesc;$/;"	t	typeref:struct:GateDesc
+KOFFSET	include/vm.h	4;"	d
+KSEL	include/x86.h	52;"	d
+LD	Makefile	/^LD      = ld$/;"	m
+LDFLAGS	Makefile	/^LDFLAGS = -melf_i386$/;"	m
+ListHead	include/adt/list.h	/^struct ListHead {$/;"	s
+ListHead	include/adt/list.h	/^typedef struct ListHead ListHead;$/;"	t	typeref:struct:ListHead
+MEM_MAX	include/vm.h	5;"	d
+NR_IRQ	include/x86.h	56;"	d
+NR_PDE	include/x86.h	28;"	d
+NR_PTE	include/x86.h	29;"	d
+NR_SEG	include/x86.h	44;"	d
+NULL	include/const.h	7;"	d
+OBJS	Makefile	/^OBJS    = $(CFILES:.c=.o) $(SFILES:.S=.o)$/;"	m
+OFF	include/x86.h	73;"	d
+PDE	include/x86.h	/^typedef uint32_t PDE;$/;"	t
+PDX	include/x86.h	71;"	d
+PDXSHFT	include/x86.h	32;"	d
+PGADDR	include/x86.h	76;"	d
+PGROUNDDOWN	include/x86.h	79;"	d
+PGROUNDUP	include/x86.h	78;"	d
+PGSHFT	include/x86.h	30;"	d
+PG_ALIGN	src/kernel/vm/kvm.c	/^PDE kpdir[NR_PDE] PG_ALIGN;            \/\/ the kernel page directory$/;"	v
+PG_ALIGN	src/kernel/vm/kvm.c	/^PTE kptab[MEM_MAX \/ PG_SIZE] PG_ALIGN; \/\/ the kernel page tables$/;"	v
+PG_ALIGN	src/kernel/vm/kvm.c	5;"	d	file:
+PG_SIZE	include/x86.h	27;"	d
+PORT_PIC_MS	src/kernel/irq/i8259.c	3;"	d	file:
+PORT_PIC_SL	src/kernel/irq/i8259.c	4;"	d	file:
+PTE	include/x86.h	/^typedef uint32_t PTE;$/;"	t
+PTE_A	include/x86.h	40;"	d
+PTE_ADDR	include/x86.h	82;"	d
+PTE_D	include/x86.h	41;"	d
+PTE_P	include/x86.h	35;"	d
+PTE_PCD	include/x86.h	39;"	d
+PTE_PWT	include/x86.h	38;"	d
+PTE_U	include/x86.h	37;"	d
+PTE_W	include/x86.h	36;"	d
+PTX	include/x86.h	72;"	d
+PTXSHFT	include/x86.h	31;"	d
+ProgramHeader	boot/boot.h	/^struct ProgramHeader {$/;"	s
+QEMU	Makefile	/^QEMU    = qemu-system-i386$/;"	m
+SECTSIZE	boot/main.c	14;"	d	file:
+SEG	include/x86.h	102;"	d
+SEG16	include/x86.h	107;"	d
+SEG_ASM	boot/asm.h	9;"	d
+SEG_KCODE	include/x86.h	45;"	d
+SEG_KDATA	include/x86.h	46;"	d
+SEG_NULLASM	boot/asm.h	5;"	d
+SEG_TSS	include/x86.h	49;"	d
+SEG_UCODE	include/x86.h	47;"	d
+SEG_UDATA	include/x86.h	48;"	d
+SERIAL_PORT	src/lib/debug.c	4;"	d	file:
+SFILES	Makefile	/^SFILES  = $(shell find src\/ -name "*.S")$/;"	m
+STA_R	include/x86.h	11;"	d
+STA_W	include/x86.h	10;"	d
+STA_X	include/x86.h	9;"	d
+STS_IG32	include/x86.h	15;"	d
+STS_T32A	include/x86.h	14;"	d
+STS_TG32	include/x86.h	16;"	d
+SegDesc	include/x86.h	/^struct SegDesc {$/;"	s
+SegDesc	include/x86.h	/^typedef struct SegDesc SegDesc;$/;"	t	typeref:struct:SegDesc
+TRUE	include/const.h	4;"	d
+TSS	include/x86.h	/^struct TSS {$/;"	s
+TSS	include/x86.h	/^typedef struct TSS TSS;$/;"	t	typeref:struct:TSS
+TrapFrame	include/x86.h	/^struct TrapFrame {$/;"	s
+TrapFrame	include/x86.h	/^typedef struct TrapFrame TrapFrame;$/;"	t	typeref:struct:TrapFrame
+USEL	include/x86.h	53;"	d
+VA_TO_PA	boot/main.c	15;"	d	file:
+__ASSERT_H__	include/assert.h	2;"	d
+__COMMON_H__	include/common.h	2;"	d
+__CONST_H__	include/const.h	2;"	d
+__DEBUG_H__	include/debug.h	2;"	d
+__IRQ_H__	include/irq.h	2;"	d
+__KERNEL_H__	include/kernel.h	2;"	d
+__LIST_H__	include/adt/list.h	2;"	d
+__STRING_H__	include/string.h	2;"	d
+__TYPES_H__	include/types.h	2;"	d
+__VM_H__	include/vm.h	2;"	d
+__X86_H__	include/x86.h	2;"	d
+abort	src/lib/abort.c	/^abort(const char *file, int line) {$/;"	f
+align	boot/boot.h	/^	unsigned int align;$/;"	m	struct:ProgramHeader
+args	include/x86.h	/^	uint32_t args : 5;        \/\/ # args, 0 for interrupt\/trap gates$/;"	m	struct:GateDesc
+assert	include/assert.h	6;"	d
+avl	include/x86.h	/^	uint32_t avl : 1;        \/\/ Unused (available for software use)$/;"	m	struct:SegDesc
+base_15_0	include/x86.h	/^	uint32_t base_15_0 : 16; \/\/ Low bits of segment base address$/;"	m	struct:SegDesc
+base_23_16	include/x86.h	/^	uint32_t base_23_16 : 8; \/\/ Middle bits of segment base address$/;"	m	struct:SegDesc
+base_31_24	include/x86.h	/^	uint32_t base_31_24 : 8; \/\/ High bits of segment base address$/;"	m	struct:SegDesc
+boolean	include/types.h	/^typedef unsigned char  boolean;$/;"	t
+bootmain	boot/main.c	/^bootmain(void) {$/;"	f
+cli	include/x86.h	/^cli(void) {$/;"	f
+cs	include/x86.h	/^	uint32_t cs : 16;         \/\/ Code segment selector$/;"	m	struct:GateDesc
+cs	include/x86.h	/^	uint32_t err, eip, cs, eflags; \/\/ Execution state before trap $/;"	m	struct:TrapFrame
+db	include/x86.h	/^	uint32_t db : 1;         \/\/ 0 = 16-bit segment, 1 = 32-bit segment$/;"	m	struct:SegDesc
+dontcare	include/x86.h	/^	char dontcare[88];$/;"	m	struct:TSS
+dpl	include/x86.h	/^	uint32_t dpl : 2;         \/\/ Descriptor(meaning new) privilege level$/;"	m	struct:GateDesc
+dpl	include/x86.h	/^	uint32_t dpl : 2;        \/\/ Descriptor Privilege Level$/;"	m	struct:SegDesc
+ds	include/x86.h	/^	uint32_t gs, fs, es, ds;       \/\/ Segment register$/;"	m	struct:TrapFrame
+eax	include/x86.h	/^	uint32_t ebx, edx, ecx, eax;   \/\/ Register saved by pushal$/;"	m	struct:TrapFrame
+ebp	include/x86.h	/^	uint32_t edi, esi, ebp, esp_;$/;"	m	struct:TrapFrame
+ebx	include/x86.h	/^	uint32_t ebx, edx, ecx, eax;   \/\/ Register saved by pushal$/;"	m	struct:TrapFrame
+ecx	include/x86.h	/^	uint32_t ebx, edx, ecx, eax;   \/\/ Register saved by pushal$/;"	m	struct:TrapFrame
+edi	include/x86.h	/^	uint32_t edi, esi, ebp, esp_;$/;"	m	struct:TrapFrame
+edx	include/x86.h	/^	uint32_t ebx, edx, ecx, eax;   \/\/ Register saved by pushal$/;"	m	struct:TrapFrame
+eflags	include/x86.h	/^	uint32_t err, eip, cs, eflags; \/\/ Execution state before trap $/;"	m	struct:TrapFrame
+ehsize	boot/boot.h	/^	unsigned short ehsize;$/;"	m	struct:ELFHeader
+eip	include/x86.h	/^	uint32_t err, eip, cs, eflags; \/\/ Execution state before trap $/;"	m	struct:TrapFrame
+elf	boot/boot.h	/^	unsigned char  elf[12];$/;"	m	struct:ELFHeader
+entry	boot/boot.h	/^	unsigned int   entry;$/;"	m	struct:ELFHeader
+entry	src/kernel/main.c	/^entry(void) {$/;"	f
+err	include/x86.h	/^	uint32_t err, eip, cs, eflags; \/\/ Execution state before trap $/;"	m	struct:TrapFrame
+es	include/x86.h	/^	uint32_t gs, fs, es, ds;       \/\/ Segment register$/;"	m	struct:TrapFrame
+esi	include/x86.h	/^	uint32_t edi, esi, ebp, esp_;$/;"	m	struct:TrapFrame
+esp	include/x86.h	/^	uint32_t esp, ss;              \/\/ Used only when returning to DPL=3$/;"	m	struct:TrapFrame
+esp0	include/x86.h	/^	uint32_t esp0;         \/\/ Ring 0 Stack pointer and segment selector$/;"	m	struct:TSS
+esp_	include/x86.h	/^	uint32_t edi, esi, ebp, esp_;$/;"	m	struct:TrapFrame
+filesz	boot/boot.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
+flags	boot/boot.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
+flags	boot/boot.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
+fs	include/x86.h	/^	uint32_t gs, fs, es, ds;       \/\/ Segment register$/;"	m	struct:TrapFrame
+g	include/x86.h	/^	uint32_t g : 1;          \/\/ Granularity: limit scaled by 4K when set$/;"	m	struct:SegDesc
+gdt	boot/start.S	/^gdt:$/;"	l
+gdt	src/kernel/vm/kvm.c	/^SegDesc gdt[NR_SEG];                   \/\/ the new GDT$/;"	v
+gdtdesc	boot/start.S	/^gdtdesc:                           # GDT描述符$/;"	l
+get_cr0	include/x86.h	/^get_cr0(void) {$/;"	f
+gs	include/x86.h	/^	uint32_t gs, fs, es, ds;       \/\/ Segment register$/;"	m	struct:TrapFrame
+idt	src/kernel/irq/idt.c	/^struct GateDesc idt[NR_IRQ];$/;"	v	typeref:struct:GateDesc
+in_byte	boot/boot.h	/^in_byte(short port) {$/;"	f
+in_byte	include/x86.h	/^in_byte(uint16_t port) {$/;"	f
+in_long	boot/boot.h	/^in_long(short port) {$/;"	f
+in_long	include/x86.h	/^in_long(uint16_t port) {$/;"	f
+init_debug	src/lib/debug.c	/^init_debug(void) {$/;"	f
+init_i8259	src/kernel/irq/i8259.c	/^void init_i8259(void) {$/;"	f
+init_idt	src/kernel/irq/idt.c	/^init_idt(void) {$/;"	f
+init_kvm	src/kernel/vm/kvm.c	/^init_kvm(void) { \/\/ setup kernel memory mapping$/;"	f
+init_seg	src/kernel/vm/kvm.c	/^init_seg() { \/\/ setup kernel segements$/;"	f
+int16_t	include/types.h	/^typedef          short int16_t;$/;"	t
+int32_t	include/types.h	/^typedef          int   int32_t;$/;"	t
+int8_t	include/types.h	/^typedef          char  int8_t;$/;"	t
+irq	include/x86.h	/^	int      irq;                  \/\/ # of irq$/;"	m	struct:TrapFrame
+irq_handle	src/kernel/irq/irq_handle.c	/^void irq_handle(TrapFrame *tf) {$/;"	f
+itoa	src/lib/string.c	/^itoa(int value, int base) {$/;"	f
+itoa_buf	src/lib/string.c	/^itoa_buf(int value, char *buf, int base) {$/;"	f
+lim_15_0	include/x86.h	/^	uint32_t lim_15_0 : 16;  \/\/ Low bits of segment limit$/;"	m	struct:SegDesc
+lim_19_16	include/x86.h	/^	uint32_t lim_19_16 : 4;  \/\/ High bits of segment limit$/;"	m	struct:SegDesc
+link	include/x86.h	/^	uint32_t link;         \/\/ Unused$/;"	m	struct:TSS
+list_add	include/adt/list.h	/^list_add(ListHead *prev, ListHead *next, ListHead *data) {$/;"	f
+list_add_after	include/adt/list.h	/^list_add_after(ListHead *list, ListHead *data) {$/;"	f
+list_add_before	include/adt/list.h	/^list_add_before(ListHead *list, ListHead *data) {$/;"	f
+list_del	include/adt/list.h	/^list_del(ListHead *data) {$/;"	f
+list_empty	include/adt/list.h	/^list_empty(ListHead *list) {$/;"	f
+list_entry	include/adt/list.h	11;"	d
+list_foreach	include/adt/list.h	52;"	d
+list_init	include/adt/list.h	/^list_init(ListHead *list) {$/;"	f
+machine	boot/boot.h	/^	unsigned short machine;$/;"	m	struct:ELFHeader
+magic	boot/boot.h	/^	unsigned int   magic;$/;"	m	struct:ELFHeader
+memcpy	src/lib/string.c	/^memcpy(void *dst, const void *src, size_t count) {$/;"	f
+memset	src/lib/string.c	/^memset(void *dst, int val, size_t count) {$/;"	f
+memsz	boot/boot.h	/^	unsigned int memsz;$/;"	m	struct:ProgramHeader
+next	include/adt/list.h	/^	struct ListHead *prev, *next;$/;"	m	struct:ListHead	typeref:struct:ListHead::
+off	boot/boot.h	/^	unsigned int off;$/;"	m	struct:ProgramHeader
+off_15_0	include/x86.h	/^	uint32_t off_15_0 : 16;   \/\/ Low 16 bits of offset in segment$/;"	m	struct:GateDesc
+off_31_16	include/x86.h	/^	uint32_t off_31_16 : 16;  \/\/ High bits of offset in segment$/;"	m	struct:GateDesc
+os_init	src/kernel/main.c	/^os_init(void) {$/;"	f
+out_byte	boot/boot.h	/^out_byte(short port, char data) {$/;"	f
+out_byte	include/x86.h	/^out_byte(uint16_t port, uint8_t data) {$/;"	f
+out_long	include/x86.h	/^out_long(uint16_t port, uint32_t data) {$/;"	f
+p	include/x86.h	/^	uint32_t p : 1;           \/\/ Present$/;"	m	struct:GateDesc
+p	include/x86.h	/^	uint32_t p : 1;          \/\/ Present$/;"	m	struct:SegDesc
+pa_to_va	include/vm.h	8;"	d
+paddr	boot/boot.h	/^	unsigned int paddr;$/;"	m	struct:ProgramHeader
+panic	src/lib/abort.c	/^panic(const char *str) {$/;"	f
+phentsize	boot/boot.h	/^	unsigned short phentsize;$/;"	m	struct:ELFHeader
+phnum	boot/boot.h	/^	unsigned short phnum;$/;"	m	struct:ELFHeader
+phoff	boot/boot.h	/^	unsigned int   phoff;$/;"	m	struct:ELFHeader
+pid_t	include/types.h	/^typedef int32_t  pid_t;$/;"	t
+prev	include/adt/list.h	/^	struct ListHead *prev, *next;$/;"	m	struct:ListHead	typeref:struct:ListHead::ListHead
+printk	src/lib/debug.c	/^printk(const char *fmt, ...) {$/;"	f
+readf	include/x86.h	/^readf(void) {$/;"	f
+readsect	boot/main.c	/^readsect(void *dst, int offset) {$/;"	f
+readseg	boot/main.c	/^readseg(unsigned char *pa, int count, int offset) {$/;"	f
+rsv1	include/x86.h	/^	uint32_t rsv1 : 1;       \/\/ Reserved$/;"	m	struct:SegDesc
+rsv1	include/x86.h	/^	uint32_t rsv1 : 3;        \/\/ Reserved(should be zero I guess)$/;"	m	struct:GateDesc
+s	include/x86.h	/^	uint32_t s : 1;           \/\/ Must be 0 (system)$/;"	m	struct:GateDesc
+s	include/x86.h	/^	uint32_t s : 1;          \/\/ 0 = system, 1 = application$/;"	m	struct:SegDesc
+serial_idle	src/lib/debug.c	/^serial_idle(void) {$/;"	f	file:
+serial_printc	src/lib/debug.c	/^serial_printc(char ch) {$/;"	f
+set_cr0	include/x86.h	/^set_cr0(uint32_t cr0) {$/;"	f
+set_cr3	include/x86.h	/^set_cr3(void *pdir) {$/;"	f
+set_gdt	include/x86.h	/^set_gdt(SegDesc *gdt, uint32_t size) {$/;"	f
+set_idt	include/x86.h	/^set_idt(GateDesc *idt, uint32_t size) {$/;"	f
+set_tr	include/x86.h	/^set_tr(uint16_t selector) {$/;"	f
+shentsize	boot/boot.h	/^	unsigned short shentsize;$/;"	m	struct:ELFHeader
+shnum	boot/boot.h	/^	unsigned short shnum;$/;"	m	struct:ELFHeader
+shoff	boot/boot.h	/^	unsigned int   shoff;$/;"	m	struct:ELFHeader
+shstrndx	boot/boot.h	/^	unsigned short shstrndx;$/;"	m	struct:ELFHeader
+size_t	include/types.h	/^typedef uint32_t size_t;$/;"	t
+ss	include/x86.h	/^	uint32_t esp, ss;              \/\/ Used only when returning to DPL=3$/;"	m	struct:TrapFrame
+ss0	include/x86.h	/^	uint32_t ss0;$/;"	m	struct:TSS
+start	boot/start.S	/^start:$/;"	l
+start32	boot/start.S	/^start32:$/;"	l
+sti	include/x86.h	/^sti(void) {$/;"	f
+tolower	src/lib/string.c	/^tolower(int ch) {$/;"	f
+toupper	src/lib/string.c	/^toupper(int ch) {$/;"	f
+trap	src/kernel/irq/do_irq.S	/^trap:$/;"	l
+tss	src/kernel/vm/kvm.c	/^TSS tss;                               \/\/ one TSS for all ring 3 processes$/;"	v
+type	boot/boot.h	/^	unsigned int type;$/;"	m	struct:ProgramHeader
+type	boot/boot.h	/^	unsigned short type;$/;"	m	struct:ELFHeader
+type	include/x86.h	/^	uint32_t type : 4;        \/\/ Type(STS_{TG,IG32,TG32})$/;"	m	struct:GateDesc
+type	include/x86.h	/^	uint32_t type : 4;       \/\/ Segment type (see STS_ constants)$/;"	m	struct:SegDesc
+uint16_t	include/types.h	/^typedef unsigned short uint16_t;$/;"	t
+uint32_t	include/types.h	/^typedef unsigned int   uint32_t;$/;"	t
+uint8_t	include/types.h	/^typedef unsigned char  uint8_t;$/;"	t
+utoa	src/lib/string.c	/^utoa(unsigned int value, int base) {$/;"	f
+utoa_buf	src/lib/string.c	/^utoa_buf(unsigned int value, char *buf, int base) {$/;"	f
+va_to_pa	include/vm.h	7;"	d
+vaddr	boot/boot.h	/^	unsigned int vaddr;$/;"	m	struct:ProgramHeader
+version	boot/boot.h	/^	unsigned int   version;$/;"	m	struct:ELFHeader
+vfprintf	src/lib/vfprintf.c	/^vfprintf(void (*putchar_func)(char), const char *format, void **data) {$/;"	f
+wait_intr	include/x86.h	/^wait_intr() {$/;"	f
+waitdisk	boot/main.c	/^waitdisk(void) {$/;"	f
