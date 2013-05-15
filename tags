@@ -20,20 +20,30 @@ GATE	include/x86.h	126;"	d
 GDT_ENTRY	boot/asm.h	2;"	d
 GateDesc	include/x86.h	/^struct GateDesc {$/;"	s
 GateDesc	include/x86.h	/^typedef struct GateDesc GateDesc;$/;"	t	typeref:struct:GateDesc
+INTR	include/thread.h	54;"	d
 KOFFSET	include/vm.h	4;"	d
 KSEL	include/x86.h	52;"	d
+KTH_FREE	include/thread.h	16;"	d
+KTH_NRUNNABLE	include/thread.h	17;"	d
+KTH_RUNNABLE	include/thread.h	18;"	d
 LD	Makefile	/^LD      = ld$/;"	m
 LDFLAGS	Makefile	/^LDFLAGS = -melf_i386$/;"	m
 ListHead	include/adt/list.h	/^struct ListHead {$/;"	s
 ListHead	include/adt/list.h	/^typedef struct ListHead ListHead;$/;"	t	typeref:struct:ListHead
 MEM_MAX	include/vm.h	5;"	d
+NBUF	src/kernel/main.c	20;"	d	file:
+NOINTR	include/thread.h	56;"	d
 NR_IRQ	include/x86.h	56;"	d
+NR_PCB	include/thread.h	13;"	d
 NR_PDE	include/x86.h	28;"	d
 NR_PTE	include/x86.h	29;"	d
 NR_SEG	include/x86.h	44;"	d
 NULL	include/const.h	7;"	d
 OBJS	Makefile	/^OBJS    = $(CFILES:.c=.o) $(SFILES:.S=.o)$/;"	m
 OFF	include/x86.h	73;"	d
+P	src/thread/kthread.c	/^P(Semaphore *sem){$/;"	f
+PCB	include/thread.h	/^struct PCB{$/;"	s
+PCB	include/thread.h	/^typedef struct PCB PCB;$/;"	t	typeref:struct:PCB
 PDE	include/x86.h	/^typedef uint32_t PDE;$/;"	t
 PDX	include/x86.h	71;"	d
 PDXSHFT	include/x86.h	32;"	d
@@ -75,17 +85,21 @@ SFILES	Makefile	/^SFILES  = $(shell find src\/ -name "*.S")$/;"	m
 STA_R	include/x86.h	11;"	d
 STA_W	include/x86.h	10;"	d
 STA_X	include/x86.h	9;"	d
+STK_SZ	include/thread.h	10;"	d
 STS_IG32	include/x86.h	15;"	d
 STS_T32A	include/x86.h	14;"	d
 STS_TG32	include/x86.h	16;"	d
 SegDesc	include/x86.h	/^struct SegDesc {$/;"	s
 SegDesc	include/x86.h	/^typedef struct SegDesc SegDesc;$/;"	t	typeref:struct:SegDesc
+Semaphore	include/thread.h	/^struct Semaphore{$/;"	s
+Semaphore	include/thread.h	/^typedef struct Semaphore Semaphore;$/;"	t	typeref:struct:Semaphore
 TRUE	include/const.h	4;"	d
 TSS	include/x86.h	/^struct TSS {$/;"	s
 TSS	include/x86.h	/^typedef struct TSS TSS;$/;"	t	typeref:struct:TSS
 TrapFrame	include/x86.h	/^struct TrapFrame {$/;"	s
 TrapFrame	include/x86.h	/^typedef struct TrapFrame TrapFrame;$/;"	t	typeref:struct:TrapFrame
 USEL	include/x86.h	53;"	d
+V	src/thread/kthread.c	/^V(Semaphore *sem){$/;"	f
 VA_TO_PA	boot/main.c	15;"	d	file:
 __ASSERT_H__	include/assert.h	2;"	d
 __COMMON_H__	include/common.h	2;"	d
@@ -93,6 +107,7 @@ __CONST_H__	include/const.h	2;"	d
 __DEBUG_H__	include/debug.h	2;"	d
 __IRQ_H__	include/irq.h	2;"	d
 __KERNEL_H__	include/kernel.h	2;"	d
+__KTHREAD_H__	include/thread.h	2;"	d
 __LIST_H__	include/adt/list.h	2;"	d
 __STRING_H__	include/string.h	2;"	d
 __TYPES_H__	include/types.h	2;"	d
@@ -108,9 +123,13 @@ base_23_16	include/x86.h	/^	uint32_t base_23_16 : 8; \/\/ Middle bits of segment
 base_31_24	include/x86.h	/^	uint32_t base_31_24 : 8; \/\/ High bits of segment base address$/;"	m	struct:SegDesc
 boolean	include/types.h	/^typedef unsigned char  boolean;$/;"	t
 bootmain	boot/main.c	/^bootmain(void) {$/;"	f
+buf	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
 cli	include/x86.h	/^cli(void) {$/;"	f
+count	include/thread.h	/^	int count;$/;"	m	struct:Semaphore
+create_kthread	src/thread/kthread.c	/^PCB* create_kthread(void *entry){$/;"	f
 cs	include/x86.h	/^	uint32_t cs : 16;         \/\/ Code segment selector$/;"	m	struct:GateDesc
 cs	include/x86.h	/^	uint32_t err, eip, cs, eflags; \/\/ Execution state before trap $/;"	m	struct:TrapFrame
+current	src/thread/kthread.c	/^PCB* current=&pcb[0];$/;"	v
 db	include/x86.h	/^	uint32_t db : 1;         \/\/ 0 = 16-bit segment, 1 = 32-bit segment$/;"	m	struct:SegDesc
 dontcare	include/x86.h	/^	char dontcare[88];$/;"	m	struct:TSS
 dpl	include/x86.h	/^	uint32_t dpl : 2;         \/\/ Descriptor(meaning new) privilege level$/;"	m	struct:GateDesc
@@ -126,6 +145,7 @@ eflags	include/x86.h	/^	uint32_t err, eip, cs, eflags; \/\/ Execution state befo
 ehsize	boot/boot.h	/^	unsigned short ehsize;$/;"	m	struct:ELFHeader
 eip	include/x86.h	/^	uint32_t err, eip, cs, eflags; \/\/ Execution state before trap $/;"	m	struct:TrapFrame
 elf	boot/boot.h	/^	unsigned char  elf[12];$/;"	m	struct:ELFHeader
+empty	src/kernel/main.c	/^Semaphore empty, full, mutex;$/;"	v
 entry	boot/boot.h	/^	unsigned int   entry;$/;"	m	struct:ELFHeader
 entry	src/kernel/main.c	/^entry(void) {$/;"	f
 err	include/x86.h	/^	uint32_t err, eip, cs, eflags; \/\/ Execution state before trap $/;"	m	struct:TrapFrame
@@ -134,16 +154,23 @@ esi	include/x86.h	/^	uint32_t edi, esi, ebp, esp_;$/;"	m	struct:TrapFrame
 esp	include/x86.h	/^	uint32_t esp, ss;              \/\/ Used only when returning to DPL=3$/;"	m	struct:TrapFrame
 esp0	include/x86.h	/^	uint32_t esp0;         \/\/ Ring 0 Stack pointer and segment selector$/;"	m	struct:TSS
 esp_	include/x86.h	/^	uint32_t edi, esi, ebp, esp_;$/;"	m	struct:TrapFrame
+f	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
 filesz	boot/boot.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
 flags	boot/boot.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
 flags	boot/boot.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
+freelist	src/thread/kthread.c	/^ListHead freelist;$/;"	v
+freeq	include/thread.h	/^	ListHead runq, freeq;	\/\/runable queue and free queue$/;"	m	struct:PCB
+freeq_head	src/thread/kthread.c	/^ListHead *freeq_head=&freelist, *runq_head=&pcb[0].runq;$/;"	v
 fs	include/x86.h	/^	uint32_t gs, fs, es, ds;       \/\/ Segment register$/;"	m	struct:TrapFrame
+full	src/kernel/main.c	/^Semaphore empty, full, mutex;$/;"	v
 g	include/x86.h	/^	uint32_t g : 1;          \/\/ Granularity: limit scaled by 4K when set$/;"	m	struct:SegDesc
+g	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
 gdt	boot/start.S	/^gdt:$/;"	l
 gdt	src/kernel/vm/kvm.c	/^SegDesc gdt[NR_SEG];                   \/\/ the new GDT$/;"	v
 gdtdesc	boot/start.S	/^gdtdesc:                           # GDT描述符$/;"	l
 get_cr0	include/x86.h	/^get_cr0(void) {$/;"	f
 gs	include/x86.h	/^	uint32_t gs, fs, es, ds;       \/\/ Segment register$/;"	m	struct:TrapFrame
+idle	src/kernel/main.c	/^idle(void){$/;"	f
 idt	src/kernel/irq/idt.c	/^struct GateDesc idt[NR_IRQ];$/;"	v	typeref:struct:GateDesc
 in_byte	boot/boot.h	/^in_byte(short port) {$/;"	f
 in_byte	include/x86.h	/^in_byte(uint16_t port) {$/;"	f
@@ -153,6 +180,7 @@ init_debug	src/lib/debug.c	/^init_debug(void) {$/;"	f
 init_i8259	src/kernel/irq/i8259.c	/^void init_i8259(void) {$/;"	f
 init_idt	src/kernel/irq/idt.c	/^init_idt(void) {$/;"	f
 init_kvm	src/kernel/vm/kvm.c	/^init_kvm(void) { \/\/ setup kernel memory mapping$/;"	f
+init_pcbpool	src/thread/kthread.c	/^void init_pcbpool(void){$/;"	f
 init_seg	src/kernel/vm/kvm.c	/^init_seg() { \/\/ setup kernel segements$/;"	f
 int16_t	include/types.h	/^typedef          short int16_t;$/;"	t
 int32_t	include/types.h	/^typedef          int   int32_t;$/;"	t
@@ -161,6 +189,9 @@ irq	include/x86.h	/^	int      irq;                  \/\/ # of irq$/;"	m	struct:T
 irq_handle	src/kernel/irq/irq_handle.c	/^void irq_handle(TrapFrame *tf) {$/;"	f
 itoa	src/lib/string.c	/^itoa(int value, int base) {$/;"	f
 itoa_buf	src/lib/string.c	/^itoa_buf(int value, char *buf, int base) {$/;"	f
+kstack	include/thread.h	/^	char kstack[STK_SZ];	\/\/stack in PCB$/;"	m	struct:PCB
+kthid	include/thread.h	/^	int32_t kthid;		\/\/kernel thread id$/;"	m	struct:PCB
+kthsta	include/thread.h	/^	uint32_t kthsta;	\/\/kernel thread status$/;"	m	struct:PCB
 lim_15_0	include/x86.h	/^	uint32_t lim_15_0 : 16;  \/\/ Low bits of segment limit$/;"	m	struct:SegDesc
 lim_19_16	include/x86.h	/^	uint32_t lim_19_16 : 4;  \/\/ High bits of segment limit$/;"	m	struct:SegDesc
 link	include/x86.h	/^	uint32_t link;         \/\/ Unused$/;"	m	struct:TSS
@@ -172,11 +203,14 @@ list_empty	include/adt/list.h	/^list_empty(ListHead *list) {$/;"	f
 list_entry	include/adt/list.h	11;"	d
 list_foreach	include/adt/list.h	52;"	d
 list_init	include/adt/list.h	/^list_init(ListHead *list) {$/;"	f
+lock	include/thread.h	53;"	d
 machine	boot/boot.h	/^	unsigned short machine;$/;"	m	struct:ELFHeader
 magic	boot/boot.h	/^	unsigned int   magic;$/;"	m	struct:ELFHeader
 memcpy	src/lib/string.c	/^memcpy(void *dst, const void *src, size_t count) {$/;"	f
 memset	src/lib/string.c	/^memset(void *dst, int val, size_t count) {$/;"	f
 memsz	boot/boot.h	/^	unsigned int memsz;$/;"	m	struct:ProgramHeader
+mutex	src/kernel/main.c	/^Semaphore empty, full, mutex;$/;"	v
+new_sem	src/thread/kthread.c	/^new_sem(Semaphore *sem,int value){$/;"	f
 next	include/adt/list.h	/^	struct ListHead *prev, *next;$/;"	m	struct:ListHead	typeref:struct:ListHead::
 off	boot/boot.h	/^	unsigned int off;$/;"	m	struct:ProgramHeader
 off_15_0	include/x86.h	/^	uint32_t off_15_0 : 16;   \/\/ Low 16 bits of offset in segment$/;"	m	struct:GateDesc
@@ -190,19 +224,25 @@ p	include/x86.h	/^	uint32_t p : 1;          \/\/ Present$/;"	m	struct:SegDesc
 pa_to_va	include/vm.h	8;"	d
 paddr	boot/boot.h	/^	unsigned int paddr;$/;"	m	struct:ProgramHeader
 panic	src/lib/abort.c	/^panic(const char *str) {$/;"	f
+pcb	src/thread/kthread.c	/^PCB pcb[NR_PCB];$/;"	v
 phentsize	boot/boot.h	/^	unsigned short phentsize;$/;"	m	struct:ELFHeader
 phnum	boot/boot.h	/^	unsigned short phnum;$/;"	m	struct:ELFHeader
 phoff	boot/boot.h	/^	unsigned int   phoff;$/;"	m	struct:ELFHeader
 pid_t	include/types.h	/^typedef int32_t  pid_t;$/;"	t
 prev	include/adt/list.h	/^	struct ListHead *prev, *next;$/;"	m	struct:ListHead	typeref:struct:ListHead::ListHead
 printk	src/lib/debug.c	/^printk(const char *fmt, ...) {$/;"	f
+queue	include/thread.h	/^	ListHead queue;$/;"	m	struct:Semaphore
+r	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
 readf	include/x86.h	/^readf(void) {$/;"	f
 readsect	boot/main.c	/^readsect(void *dst, int offset) {$/;"	f
 readseg	boot/main.c	/^readseg(unsigned char *pa, int count, int offset) {$/;"	f
 rsv1	include/x86.h	/^	uint32_t rsv1 : 1;       \/\/ Reserved$/;"	m	struct:SegDesc
 rsv1	include/x86.h	/^	uint32_t rsv1 : 3;        \/\/ Reserved(should be zero I guess)$/;"	m	struct:GateDesc
+runq	include/thread.h	/^	ListHead runq, freeq;	\/\/runable queue and free queue$/;"	m	struct:PCB
+runq_head	src/thread/kthread.c	/^ListHead *freeq_head=&freelist, *runq_head=&pcb[0].runq;$/;"	v
 s	include/x86.h	/^	uint32_t s : 1;           \/\/ Must be 0 (system)$/;"	m	struct:GateDesc
 s	include/x86.h	/^	uint32_t s : 1;          \/\/ 0 = system, 1 = application$/;"	m	struct:SegDesc
+semq	include/thread.h	/^	ListHead semq;		\/\/semaphor queue$/;"	m	struct:PCB
 serial_idle	src/lib/debug.c	/^serial_idle(void) {$/;"	f	file:
 serial_printc	src/lib/debug.c	/^serial_printc(char ch) {$/;"	f
 set_cr0	include/x86.h	/^set_cr0(uint32_t cr0) {$/;"	f
@@ -215,11 +255,22 @@ shnum	boot/boot.h	/^	unsigned short shnum;$/;"	m	struct:ELFHeader
 shoff	boot/boot.h	/^	unsigned int   shoff;$/;"	m	struct:ELFHeader
 shstrndx	boot/boot.h	/^	unsigned short shstrndx;$/;"	m	struct:ELFHeader
 size_t	include/types.h	/^typedef uint32_t size_t;$/;"	t
+sleep	src/thread/kthread.c	/^void sleep(void){$/;"	f
 ss	include/x86.h	/^	uint32_t esp, ss;              \/\/ Used only when returning to DPL=3$/;"	m	struct:TrapFrame
 ss0	include/x86.h	/^	uint32_t ss0;$/;"	m	struct:TSS
 start	boot/start.S	/^start:$/;"	l
 start32	boot/start.S	/^start32:$/;"	l
 sti	include/x86.h	/^sti(void) {$/;"	f
+test_consumer	src/kernel/main.c	/^test_consumer(void) {$/;"	f
+test_producer	src/kernel/main.c	/^test_producer(void) {$/;"	f
+test_setup	src/kernel/main.c	/^test_setup(void) {$/;"	f
+tf	include/thread.h	/^	TrapFrame *tf;		\/\/trape frame pointer to save registers$/;"	m	struct:PCB
+thread_tb0	src/kernel/main.c	/^thread_tb0(void){$/;"	f
+thread_tb1	src/kernel/main.c	/^thread_tb1(void){$/;"	f
+thread_tb2	src/kernel/main.c	/^thread_tb2(void){$/;"	f
+thread_tb3	src/kernel/main.c	/^thread_tb3(void){$/;"	f
+thread_tb4	src/kernel/main.c	/^thread_tb4(void){$/;"	f
+tid	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
 tolower	src/lib/string.c	/^tolower(int ch) {$/;"	f
 toupper	src/lib/string.c	/^toupper(int ch) {$/;"	f
 trap	src/kernel/irq/do_irq.S	/^trap:$/;"	l
@@ -231,6 +282,7 @@ type	include/x86.h	/^	uint32_t type : 4;       \/\/ Segment type (see STS_ const
 uint16_t	include/types.h	/^typedef unsigned short uint16_t;$/;"	t
 uint32_t	include/types.h	/^typedef unsigned int   uint32_t;$/;"	t
 uint8_t	include/types.h	/^typedef unsigned char  uint8_t;$/;"	t
+unlock	include/thread.h	55;"	d
 utoa	src/lib/string.c	/^utoa(unsigned int value, int base) {$/;"	f
 utoa_buf	src/lib/string.c	/^utoa_buf(unsigned int value, char *buf, int base) {$/;"	f
 va_to_pa	include/vm.h	7;"	d
@@ -239,3 +291,4 @@ version	boot/boot.h	/^	unsigned int   version;$/;"	m	struct:ELFHeader
 vfprintf	src/lib/vfprintf.c	/^vfprintf(void (*putchar_func)(char), const char *format, void **data) {$/;"	f
 wait_intr	include/x86.h	/^wait_intr() {$/;"	f
 waitdisk	boot/main.c	/^waitdisk(void) {$/;"	f
+wakeup	src/thread/kthread.c	/^void wakeup(PCB *pcb){$/;"	f

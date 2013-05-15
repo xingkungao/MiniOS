@@ -1,5 +1,6 @@
 *.[oad]
 *.swp
+tags
 *~
 *.img
 /boot/bootblock

@@ -30,11 +30,11 @@ os_init(void) {
 	init_pcbpool();
 	test_setup();
 /*
-	create_kthread((void*)thread_tb0);
-	create_kthread((void*)thread_tb1);
-	create_kthread((void*)thread_tb2);
-	create_kthread((void*)thread_tb3);
-	create_kthread((void*)thread_tb4);
+	wakeup(create_kthread((void*)thread_tb0));
+	wakeup(create_kthread((void*)thread_tb1));
+	wakeup(create_kthread((void*)thread_tb2));
+	wakeup(create_kthread((void*)thread_tb3));
+	wakeup(create_kthread((void*)thread_tb4));
 */
 	idle();
 }
@@ -72,7 +72,10 @@ void
 thread_tb2(void){
 //	sti();
 	while(TRUE)
+	{
 	printk("now excute thread_2!\n");
+	sleep();
+	}
 //	sti();
 //	while (TRUE) {
 //		wait_intr();

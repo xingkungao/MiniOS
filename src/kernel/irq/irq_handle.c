@@ -33,7 +33,7 @@ void irq_handle(TrapFrame *tf) {
 	} else if (irq >= 1000) {
 
 		cli();
-	//	printk("now comes a interrupt!\n");
+		printk("now comes a interrupt!\n");
 //		printk("address of previous pcb is        %x\n",(unsigned int)((char*)current));
 		current->tf=tf;
 //		printk("address of previous pcb->tf is    %x\n",(unsigned int)((char*)current->tf));

@@ -58,7 +58,7 @@ PCB* create_kthread(void *entry){
 	tf->eflags=0x200;
 	tf->eip=(unsigned)entry;
 	
-	printk("address af the allocating pcb->tf:%x\n\n",(unsigned int)newpcb->tf);
+	printk("address of the allocating pcb->tf:%x\n\n",(unsigned int)newpcb->tf);
 
 	//list_add_before(runq_head,&newpcb->runq);
 
@@ -69,10 +69,10 @@ PCB* create_kthread(void *entry){
 
 
 void sleep(void){
-	lock();
+//	lock();
 	list_del(&current->runq);
 	asm volatile("int $0x80");
-	unlock();
+//	unlock();
 }
 
 void wakeup(PCB *pcb){
