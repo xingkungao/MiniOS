@@ -44,6 +44,7 @@ PCB* create_kthread(void *entry){
 	
 
 */
+	//allocate a memory for the new pcb form pcb pool
 	newpcb=list_entry(freeq_head->next,PCB,freeq);
 
 	printk("address af the allocating pcb:    %x\n",(unsigned int)newpcb);
@@ -69,10 +70,12 @@ PCB* create_kthread(void *entry){
 
 
 void sleep(void){
-//	lock();
+	lock();
+	NOINTR;
 	list_del(&current->runq);
 	asm volatile("int $0x80");
-//	unlock();
+	unlock();
+	INTR;
 }
 
 void wakeup(PCB *pcb){
@@ -90,24 +93,30 @@ new_sem(Semaphore *sem,int value){
 void 
 P(Semaphore *sem){
 	lock();
+	NOINTR;
 	sem->count--;
 	if(sem->count < 0){
 		list_add_before(&sem->queue,&current->semq);
+		printk("sleep one\n");
 		sleep();
 	}
 	unlock();
+	INTR;
 }
 
 void 
 V(Semaphore *sem){
 	lock();
+	NOINTR;
 	sem->count++;
 	if(sem->count <= 0){
 		assert(!list_empty(&sem->queue));
 		PCB *pcb=list_entry(sem->queue.next,PCB,semq);
 		list_del(sem->queue.next);
+		printk("wake one\n");
 		wakeup(pcb);
 	}
-	lock();
+	unlock();
+	INTR;
 }
 

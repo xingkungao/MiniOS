@@ -123,7 +123,7 @@ base_23_16	include/x86.h	/^	uint32_t base_23_16 : 8; \/\/ Middle bits of segment
 base_31_24	include/x86.h	/^	uint32_t base_31_24 : 8; \/\/ High bits of segment base address$/;"	m	struct:SegDesc
 boolean	include/types.h	/^typedef unsigned char  boolean;$/;"	t
 bootmain	boot/main.c	/^bootmain(void) {$/;"	f
-buf	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
+buf	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1,pid=1;$/;"	v
 cli	include/x86.h	/^cli(void) {$/;"	f
 count	include/thread.h	/^	int count;$/;"	m	struct:Semaphore
 create_kthread	src/thread/kthread.c	/^PCB* create_kthread(void *entry){$/;"	f
@@ -154,7 +154,7 @@ esi	include/x86.h	/^	uint32_t edi, esi, ebp, esp_;$/;"	m	struct:TrapFrame
 esp	include/x86.h	/^	uint32_t esp, ss;              \/\/ Used only when returning to DPL=3$/;"	m	struct:TrapFrame
 esp0	include/x86.h	/^	uint32_t esp0;         \/\/ Ring 0 Stack pointer and segment selector$/;"	m	struct:TSS
 esp_	include/x86.h	/^	uint32_t edi, esi, ebp, esp_;$/;"	m	struct:TrapFrame
-f	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
+f	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1,pid=1;$/;"	v
 filesz	boot/boot.h	/^	unsigned int filesz;$/;"	m	struct:ProgramHeader
 flags	boot/boot.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
 flags	boot/boot.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
@@ -164,7 +164,7 @@ freeq_head	src/thread/kthread.c	/^ListHead *freeq_head=&freelist, *runq_head=&pc
 fs	include/x86.h	/^	uint32_t gs, fs, es, ds;       \/\/ Segment register$/;"	m	struct:TrapFrame
 full	src/kernel/main.c	/^Semaphore empty, full, mutex;$/;"	v
 g	include/x86.h	/^	uint32_t g : 1;          \/\/ Granularity: limit scaled by 4K when set$/;"	m	struct:SegDesc
-g	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
+g	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1,pid=1;$/;"	v
 gdt	boot/start.S	/^gdt:$/;"	l
 gdt	src/kernel/vm/kvm.c	/^SegDesc gdt[NR_SEG];                   \/\/ the new GDT$/;"	v
 gdtdesc	boot/start.S	/^gdtdesc:                           # GDT描述符$/;"	l
@@ -228,11 +228,12 @@ pcb	src/thread/kthread.c	/^PCB pcb[NR_PCB];$/;"	v
 phentsize	boot/boot.h	/^	unsigned short phentsize;$/;"	m	struct:ELFHeader
 phnum	boot/boot.h	/^	unsigned short phnum;$/;"	m	struct:ELFHeader
 phoff	boot/boot.h	/^	unsigned int   phoff;$/;"	m	struct:ELFHeader
+pid	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1,pid=1;$/;"	v
 pid_t	include/types.h	/^typedef int32_t  pid_t;$/;"	t
 prev	include/adt/list.h	/^	struct ListHead *prev, *next;$/;"	m	struct:ListHead	typeref:struct:ListHead::ListHead
 printk	src/lib/debug.c	/^printk(const char *fmt, ...) {$/;"	f
 queue	include/thread.h	/^	ListHead queue;$/;"	m	struct:Semaphore
-r	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
+r	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1,pid=1;$/;"	v
 readf	include/x86.h	/^readf(void) {$/;"	f
 readsect	boot/main.c	/^readsect(void *dst, int offset) {$/;"	f
 readseg	boot/main.c	/^readseg(unsigned char *pa, int count, int offset) {$/;"	f
@@ -270,7 +271,7 @@ thread_tb1	src/kernel/main.c	/^thread_tb1(void){$/;"	f
 thread_tb2	src/kernel/main.c	/^thread_tb2(void){$/;"	f
 thread_tb3	src/kernel/main.c	/^thread_tb3(void){$/;"	f
 thread_tb4	src/kernel/main.c	/^thread_tb4(void){$/;"	f
-tid	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;$/;"	v
+tid	src/kernel/main.c	/^int buf[NBUF], f = 0, r = 0, g = 1, tid = 1,pid=1;$/;"	v
 tolower	src/lib/string.c	/^tolower(int ch) {$/;"	f
 toupper	src/lib/string.c	/^toupper(int ch) {$/;"	f
 trap	src/kernel/irq/do_irq.S	/^trap:$/;"	l

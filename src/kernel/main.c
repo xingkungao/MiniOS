@@ -19,6 +19,7 @@ extern PCB*	current;
 
 #define NBUF 5
 int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;
+int pid=1;
 Semaphore empty, full, mutex;
 
 void
@@ -50,47 +51,32 @@ entry(void) {
 
 void
 thread_tb0(void){
-	//sti();
-//	sleep();
 	while (TRUE) {
 		printk("now excute thread_0!\n");
-	//	sleep();
 	}
 }
 
 void
 thread_tb1(void){
-	//sti();
 	while(TRUE)
 	printk("now excute thread_1!\n");
-//	sti();
-//	while (TRUE) {
-//		wait_intr();
-//	}
 }
 void
 thread_tb2(void){
-//	sti();
 	while(TRUE)
 	{
 	printk("now excute thread_2!\n");
 	sleep();
 	}
-//	sti();
-//	while (TRUE) {
-//		wait_intr();
-//	}
 }
 void
 thread_tb3(void){
-//	sti();
 	while (TRUE) {
 	printk("now excute thread_3!\n");
 	}
 }
 void
 thread_tb4(void){
-//	sti();
 	while (TRUE) {
 	printk("now excute thread_4!\n");
 	}
@@ -108,13 +94,19 @@ idle(void){
 
 void
 test_producer(void) {
+	int id =pid ++;
 	while (TRUE) {
         	P(&empty);
+		INTR;
 		P(&mutex);
+		INTR;
+		printk("#%d Pro: %d\n", id, g);
 		buf[f ++] = g ++;
 		f %= NBUF;
 		V(&mutex);
+		INTR;
 		V(&full);
+		INTR;
 	}
 }
 
@@ -123,11 +115,15 @@ test_consumer(void) {
 	int id = tid ++;
 	while (TRUE) {
 	        P(&full);
+		INTR;
 	        P(&mutex);
+		INTR;
 	       	printk("#%d Got: %d\n", id, buf[r ++]);
 	        r %= NBUF;
 	        V(&mutex);
+		INTR;
 	        V(&empty);
+		INTR;
 	}
 }
 

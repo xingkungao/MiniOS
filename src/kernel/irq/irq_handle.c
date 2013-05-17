@@ -16,12 +16,15 @@ void irq_handle(TrapFrame *tf) {
 		// exception
 		if(irq==0x80){
 			cli();
-//			printk("now have triggered a 0x80 exception\n");
+			printk("now have triggered a 0x80 exception\n");
 			current->tf=tf;
 		//	current=list_entry(runq_head->prev,PCB,runq);
 			current=list_entry((current->runq).next,PCB,runq);
 			if(current==&pcb[0])
+			{
 		      		current=list_entry((current->runq).next,PCB,runq);
+				printk("avoid idle in runq\n");
+			}
 		}
 		else{
 			cli();
@@ -49,8 +52,11 @@ void irq_handle(TrapFrame *tf) {
 		current
 */
 		current=list_entry((current->runq).next,PCB,runq);
-		if(current==&pcb[0])
+		if(current==&pcb[0]){
+				printk("avoid idle in runq\n");
+
 		      current=list_entry((current->runq).next,PCB,runq);
+		}
 
 //		list_del(&(current->runq));
 //		current=list_entry(runq_head->next,PCB,runq);

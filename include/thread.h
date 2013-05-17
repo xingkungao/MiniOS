@@ -16,19 +16,20 @@
 #define KTH_FREE 	0
 #define KTH_NRUNNABLE 	1
 #define KTH_RUNNABLE 	2
-
 //pcb for thread
 struct PCB{
-	TrapFrame *tf;		//trape frame pointer to save registers
-	int32_t kthid;		//kernel thread id
-	uint32_t kthsta;	//kernel thread status
+	TrapFrame	*tf;		//trape frame pointer to save registers
+	int32_t  	kthid;		//kernel thread id
+	uint32_t 	kthsta;	//kernel thread status
+	int32_t  	lock_count;
 //	uint32_t cr3;
-	ListHead runq, freeq;	//runable queue and free queue
-	ListHead semq;		//semaphor queue
-	char kstack[STK_SZ];	//stack in PCB
+	ListHead 	runq, freeq;	//runable queue and free queue
+	ListHead 	semq;		//semaphor queue
+	char 		kstack[STK_SZ];	//stack in PCB
 };
 typedef struct PCB PCB;
 
+extern PCB* current;
 //semaphore for schedule
 struct Semaphore{
 	int count;
@@ -50,10 +51,26 @@ void wakeup(PCB *pcb);
 
 //void lock(void);
 //void unlock(void);
-#define lock()   do{ cli(); } while(0)
-#define	INTR assert(~readf() & FL_IF)
-#define unlock() do{ sti(); } while(0)
-#define	NOINTR assert(readf() & FL_IF)
+//#define lock()   do{ cli(); } while(0)
+static inline void
+lock(void){
+	if(current->lock_count==0){
+		cli();
+		current->lock_count++;
+	}
+}
+static inline void
+unlock(void){
+	if(current->lock_count==1){
+		current->lock_count--;
+		sti();
+	}
+}
+
+
+//#define unlock() do{ sti(); } while(0)
+#define	INTR assert(readf() & FL_IF)
+#define	NOINTR assert(~readf() & FL_IF)
 
 
 void new_sem(Semaphore* sem,int count);
