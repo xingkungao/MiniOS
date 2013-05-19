@@ -11,39 +11,46 @@
  */
 int
 vfprintf(void (*putchar_func)(char), const char *format, void **data) {
+	int  cnt=0;
 	char ch;
-	char *str;
 	char *pbuf;
 	while(1){
 		while((ch=*format++)!='%'){
 			if(ch=='\0')
-			      return 0;
+			      return cnt;
 			putchar_func(ch);
+			cnt++;
 		}
 		switch ((ch=*format++)){
 			case 'c':
 				putchar_func(*(char *)data++);
+				cnt++;
 				break;
 			case 'd':
 				pbuf=itoa(*(int *)data++,10);
-				while((ch=*pbuf++)!=0)
-				      putchar_func(ch);
+				while((ch=*pbuf++)!=0){
+					putchar_func(ch);
+					cnt++;
+				}
 				break;
 			case 'x':
 				pbuf=utoa(*(unsigned int *)data++,16);
-				while((ch=*pbuf++)!=0)
-				      putchar_func(ch);
+				while((ch=*pbuf++)!=0){
+					putchar_func(ch);
+					cnt++;
+				}
 				break;
 			case 's':
-				str=*(char **)data++;
-				while((ch=*str++)!=0)
-				      putchar_func(ch);
+				pbuf=*(char **)data++;
+				while((ch=*pbuf++)!=0){
+					putchar_func(ch);
+					cnt++;
+				}
 				break;
 			default :
-				for (str="unsported printing format!\n"; *str; str ++)
-				      putchar_func(*str);
+				for (pbuf="unsported printing format,ignore! \n"; *pbuf; pbuf ++)
+				      putchar_func(*pbuf);
 				break;
 		}
 	}
-	return 0;
 }

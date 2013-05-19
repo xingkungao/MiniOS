@@ -18,13 +18,19 @@ void irq_handle(TrapFrame *tf) {
 			cli();
 			printk("now have triggered a 0x80 exception\n");
 			current->tf=tf;
-		//	current=list_entry(runq_head->prev,PCB,runq);
+
+			//WARNNING: the following is actually a little bit unsafe because the current->runq
+			//may have been deleted from runq_head after the routine "sleep()" is called.
+			//But due to the implementation of the routine "list_del", current->runq.next
+			//still points to the next pcb->runq we need properly. 
+
 			current=list_entry((current->runq).next,PCB,runq);
+
+			//notice that theread idle(i.e. pcb[0]) always stays in the list "runq_head";
+			//to avoid choosing idle while other thread is available to schedule,
+			//we must "skip" the idle thread. 
 			if(current==&pcb[0])
-			{
-		      		current=list_entry((current->runq).next,PCB,runq);
-				printk("avoid idle in runq\n");
-			}
+		              current=list_entry((current->runq).next,PCB,runq);
 		}
 		else{
 			cli();
@@ -52,11 +58,9 @@ void irq_handle(TrapFrame *tf) {
 		current
 */
 		current=list_entry((current->runq).next,PCB,runq);
-		if(current==&pcb[0]){
-				printk("avoid idle in runq\n");
-
+		if(current==&pcb[0])
 		      current=list_entry((current->runq).next,PCB,runq);
-		}
+		
 
 //		list_del(&(current->runq));
 //		current=list_entry(runq_head->next,PCB,runq);
