@@ -10,34 +10,46 @@
 #define STK_SZ     	0x1000
 
 //number of PCB
-#define NR_PCB		16
-
+#define NR_PCB		128	
+/*
 //status of kernel thread
 #define KTH_FREE 	0
 #define KTH_NRUNNABLE 	1
 #define KTH_RUNNABLE 	2
+*/
+
 //pcb for thread
 struct PCB{
-	TrapFrame	*tf;		//trape frame pointer to save registers
+	//trap frame pointer pointing to register contest
+	TrapFrame	*tf;		
+	/*
 	int32_t  	kthid;		//kernel thread id
-	uint32_t 	kthsta;	//kernel thread status
+	uint32_t 	kthsta;		//kernel thread status
+	*/
+
+	//lock_count for each pcb
 	int32_t  	lock_count;
-//	uint32_t cr3;
-	ListHead 	runq, freeq;	//runable queue and free queue
-	ListHead 	semq;		//semaphor queue
+	
+	//runq: manages runable pcb using list_head
+	ListHead 	runq, freeq;
+
+	//manages threads whick sleep
+	ListHead 	semq;	
+
+	//stack for each pcb
 	char 		kstack[STK_SZ];	//stack in PCB
 };
 typedef struct PCB PCB;
 
 extern PCB* current;
-//semaphore for schedule
+//semaphore to manage sleeped threads.
 struct Semaphore{
 	int count;
 	ListHead queue;
 };
 typedef struct Semaphore Semaphore;
 
-//allocate a pool for pcb available list
+//manage a memory pool to create new pcb
 void init_pcbpool(void);
 
 //create a kernel thread
@@ -49,27 +61,22 @@ void sleep(void);
 //wake up a kernel thread
 void wakeup(PCB *pcb);
 
-//void lock(void);
-//void unlock(void);
-//#define lock()   do{ cli(); } while(0)
 static inline void
 lock(void){
-	if(current->lock_count==0){
-		cli();
-		current->lock_count++;
-	}
+	cli();			//notice we must clear IF first
+	current->lock_count++;
 }
 static inline void
 unlock(void){
-	if(current->lock_count==1){
-		current->lock_count--;
-		sti();
-	}
+	current->lock_count--;
+	assert(current->lock_count>=0);
+	if(current->lock_count==0)
+	      sti();		//notice we must set IF at the very last
 }
 
 
-//#define unlock() do{ sti(); } while(0)
 #define	INTR assert(readf() & FL_IF)
+
 #define	NOINTR assert(~readf() & FL_IF)
 
 

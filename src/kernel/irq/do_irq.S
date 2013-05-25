@@ -40,7 +40,7 @@ trap:
 	pushl %esp
 	call irq_handle
 
-	movl (current), %esi
+	movl current, %esi
 	movl (%esi), %esp
 	
 	popal

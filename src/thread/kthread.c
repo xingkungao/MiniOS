@@ -5,13 +5,15 @@
 PCB pcb[NR_PCB];
 PCB* current=&pcb[0];
 ListHead freelist;
+
+//the very first pcb is for thread idle, thus no initialization is needed
 ListHead *freeq_head=&freelist, *runq_head=&pcb[0].runq;
 
 void init_pcbpool(void){
 	int i=1;
 
 	list_init(freeq_head);
-
+        //now we orgnize the pcb array as a double list
 	for(;i<NR_PCB;i++){
 		list_add_after(freeq_head,&pcb[i].freeq);
 	}
@@ -23,47 +25,30 @@ void init_pcbpool(void){
 
 
 PCB* create_kthread(void *entry){
-//	int i=1;
 	PCB* newpcb;
 	TrapFrame *tf;
-/*	if(NULL==freeq_head->next){
-		list_init(freeq_head);
-//		assert(list_empty(freeq_head)!=1);
-//		for(;i<NR_PCB;i++){
-//			pcb[i].freeq.next=&pcb[(i+1+NR_PCB)%NR_PCB].freeq;
-//			pcb[i].freeq.prev=&pcb[(i-1+NR_PCB)%NR_PCB].freeq;
-//		}
-		for(;i<NR_PCB;i++){
-			list_add_after(freeq_head,&pcb[i].freeq);
-		}
-		assert(list_empty(freeq_head)!=1);
-	}
 
-	if(NULL==runq_head->next || NULL==runq_head->prev)
-	      list_init(runq_head);
-	
-
-*/
 	//allocate a memory for the new pcb form pcb pool
 	newpcb=list_entry(freeq_head->next,PCB,freeq);
 
-	printk("address af the allocating pcb:    %x\n",(unsigned int)newpcb);
+//	printk("address af the allocating pcb:    %x\n",(unsigned int)newpcb);
+
+	//one pcb is taken from the pcb pool
 	list_del(freeq_head->next);
 
-	//initialize new thread;
+	//we need to konw the exact location in the pcb of the thread's trapframe
 	tf=(TrapFrame *)(newpcb->kstack+STK_SZ)-1;
 	newpcb->tf=tf;
+	
+	//initialize new thread's trapframe
+	tf=(TrapFrame *)(newpcb->kstack+STK_SZ)-1;
 	tf->ds=KSEL(SEG_KDATA);
 	tf->es=KSEL(SEG_KDATA);
 	tf->cs=KSEL(SEG_KCODE);
 	tf->eflags=0x200;
 	tf->eip=(unsigned)entry;
 	
-	printk("address of the allocating pcb->tf:%x\n\n",(unsigned int)newpcb->tf);
-
-	//list_add_before(runq_head,&newpcb->runq);
-
-	//assert(!list_empty(runq_head));
+//	printk("address of the allocating pcb->tf:%x\n\n",(unsigned int)newpcb->tf);
 
 	return newpcb;
 }
@@ -75,13 +60,13 @@ void sleep(void){
 	list_del(&current->runq);
 	asm volatile("int $0x80");
 	unlock();
-	INTR;
 }
 
 void wakeup(PCB *pcb){
-//	lock();
+	lock();
+	NOINTR;
 	list_add_before(runq_head,&pcb->runq);
-//	lock();
+	unlock();
 }
 
 void 
@@ -97,7 +82,7 @@ P(Semaphore *sem){
 	sem->count--;
 	if(sem->count < 0){
 		list_add_before(&sem->queue,&current->semq);
-		printk("sleep one\n");
+//		printk("sleep one\n");
 		sleep();
 	}
 	unlock();
@@ -113,7 +98,7 @@ V(Semaphore *sem){
 		assert(!list_empty(&sem->queue));
 		PCB *pcb=list_entry(sem->queue.next,PCB,semq);
 		list_del(sem->queue.next);
-		printk("wake one\n");
+//		printk("wake one\n");
 		wakeup(pcb);
 	}
 	unlock();
