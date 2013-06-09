@@ -8,6 +8,7 @@
 
 //size of stack in each PCB
 #define STK_SZ     	0x1000
+#define MSG_SZ		1024
 
 //number of PCB
 #define NR_PCB		128	
@@ -18,17 +19,33 @@
 #define KTH_RUNNABLE 	2
 */
 
+struct Message{
+	pid_t src,dest;
+	size_t type;
+	ListHead messq;
+	char payload[1024];
+}
+typedef struct Message Message;
+
+//semaphore to manage sleeped threads.
+struct Semaphore{
+	int count;
+	ListHead queue;
+};
+typedef struct Semaphore Semaphore;
+
+
 //pcb for thread
 struct PCB{
 	//trap frame pointer pointing to register contest
 	TrapFrame	*tf;		
-	/*
-	int32_t  	kthid;		//kernel thread id
-	uint32_t 	kthsta;		//kernel thread status
-	*/
+	int32_t  	pid;		//kernel thread id
+	//uint32_t 	kthsta;		//kernel thread status
 
 	//lock_count for each pcb
 	int32_t  	lock_count;
+	Semaphore	message;
+	uint32_t	message_addr;
 	
 	//runq: manages runable pcb using list_head
 	ListHead 	runq, freeq;
@@ -42,12 +59,6 @@ struct PCB{
 typedef struct PCB PCB;
 
 extern PCB* current;
-//semaphore to manage sleeped threads.
-struct Semaphore{
-	int count;
-	ListHead queue;
-};
-typedef struct Semaphore Semaphore;
 
 //manage a memory pool to create new pcb
 void init_pcbpool(void);
@@ -86,6 +97,8 @@ void P(Semaphore* sem);
 
 void V(Semaphore* sem);
 
+void send(int pid, struct message *m);
+void receive(int pid, struct message *m);
 
 
 #endif
