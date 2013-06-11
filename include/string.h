@@ -14,5 +14,8 @@ char *utoa_buf(unsigned int value, char *buf, int base);
 int toupper(int ch);
 int tolower(int ch);
 
+size_t strlen(char *);
+int strcmp(char*,char*);
+
 #endif
 

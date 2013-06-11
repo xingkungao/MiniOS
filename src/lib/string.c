@@ -69,3 +69,32 @@ utoa(unsigned int value, int base) {
 	static char buf[50];
 	return utoa_buf(value, buf, base);
 }
+
+size_t 
+strlen(char *str) {
+        int len = 0;
+        while (*str ++) len ++;
+        return len;
+}
+
+int 
+strcmp(char *str1,char *str2){
+	while( *str1 && *str2 ) {
+		if(*str1 == *str2) {
+			str1++;
+			str2++;
+		}
+		else if( *str1 > *str2 )
+		      return 1;
+		else
+		      return -1;
+	}
+	if(*str1 == *str2)
+	      return 0;
+	else if (*str1 == 0)
+	      return -1;
+	else 
+	      return 1;
+
+
+}

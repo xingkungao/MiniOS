@@ -54,6 +54,12 @@ PCB* create_kthread(void *entry){
 }
 
 
+void schedule(void){
+	current=list_entry(current.runq->next,PCB,runq);
+	if(current == &pcb[0])
+		current=list_entry(current.runq->next,PCB,runq);
+}
+
 void sleep(void){
 	lock();
 	NOINTR;
@@ -69,6 +75,15 @@ void wakeup(PCB *pcb){
 	unlock();
 }
 
+PCB* find_pcb_pid(pid_T pid){
+	int i;
+	for(i=0;i<NR_PCB_CREATED;i++){
+		if(pcb[i].pid == pid)
+		      return &pcb[i];
+	}
+	return NULL;
+}
+	
 void 
 new_sem(Semaphore *sem,int value){
 	sem->count=value;

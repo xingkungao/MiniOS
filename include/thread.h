@@ -22,9 +22,10 @@
 struct Message{
 	pid_t src,dest;
 	size_t type;
-	ListHead messq;
-	char payload[1024];
-}
+	ListHead avaq;
+	ListHead freeq;
+	char payload[256];
+};
 typedef struct Message Message;
 
 //semaphore to manage sleeped threads.
@@ -63,6 +64,7 @@ extern PCB* current;
 //manage a memory pool to create new pcb
 void init_pcbpool(void);
 
+void schedule(void);
 //create a kernel thread
 PCB* create_kthread(void *entry);
 
@@ -97,8 +99,8 @@ void P(Semaphore* sem);
 
 void V(Semaphore* sem);
 
-void send(int pid, struct message *m);
-void receive(int pid, struct message *m);
+void send(int pid, struct Message *m);
+void receive(int pid, struct Message *m);
 
 
 #endif
