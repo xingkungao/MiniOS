@@ -15,7 +15,7 @@ int toupper(int ch);
 int tolower(int ch);
 
 size_t strlen(char *);
-int strcmp(char*,char*);
+int strcmp(const char*,const char*);
 
 #endif
 

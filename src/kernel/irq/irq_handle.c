@@ -7,34 +7,39 @@ extern  PCB *current;
 extern  PCB pcb[NR_PCB];
 extern  ListHead *runq_head;
 
-static uint32_t nestlevel;
-static uint32_t isr_count;
-static boolean need_sched=FALSE;
+//static uint32_t nestlevel;
+uint32_t isr_count=0;
+boolean need_sched=FALSE;
 
 static void (*do_timer_1) (void);
 static void (*do_timer_2) (void);
 static void (*do_timer_3) (void);
 static void (*do_keyboard) (void);
 
-void add_irq_handle(int irq, void (*ptr) (void)){
+void add_irq_handle(uint32_t irq, void (*ptr)(void)){
+	assert(irq >= 0);
 	if(irq == 0) {
-		if(isr_count++ == 0)
+	printk("%d\n",isr_count);
+		if(isr_count == 0)
 		      do_timer_1=ptr;
-		else if(isr_count++ == 1)
+		else if(isr_count == 1)
 		      do_timer_2=ptr;
-		else 
+		else if(isr_count == 2) 
 		      do_timer_3=ptr;
+		isr_count++;
 	}
-	if(irq == 1)
+	if(irq == 1){
 	      do_keyboard=ptr;
+	      printk("add key \n");
+	}
 }
 
 void irq_handle(TrapFrame *tf) {
+	printk("now comes a interrupt!\n");
 	cli();
-	nestlevel++;
-	sti();
+//	nestlevel++;
 
-	TrapFrame *temp;
+//	TrapFrame *temp;
 	int irq = tf->irq;
 	assert(irq >= 0);
 
@@ -46,10 +51,6 @@ void irq_handle(TrapFrame *tf) {
 		panic("unexpected exception");	
 	}
 	else if(irq == 0x80) {
-		cli();
-		if(nestlevel == 1)
-		      schedule();
-		sti();
 	}
 	else if(irq == 1000) {
 		do_timer_1();
@@ -59,10 +60,14 @@ void irq_handle(TrapFrame *tf) {
 	else if (irq == 1001) {
 		do_keyboard();
 	}
+	if(need_sched){
+		printk("time to schedule\n");
+	      schedule();
+	}
 
-	cli();
-	nestlevel--;
-	sti();
+	//cli();
+	//nestlevel--;
+	//sti();
 }
 
 

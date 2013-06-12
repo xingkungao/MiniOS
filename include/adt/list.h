@@ -2,6 +2,7 @@
 #define __LIST_H__
 
 #include "assert.h"
+#include "common.h"
 
 struct ListHead {
 	struct ListHead *prev, *next;

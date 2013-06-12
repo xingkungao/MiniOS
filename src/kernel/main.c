@@ -3,19 +3,24 @@
 #include "vm.h"
 #include "irq.h"
 #include "thread.h"
+#include "semaphore.h"
+#include "headers/hal.h"
+#include "headers/tty.h"
+#include "headers/time.h"
 
-void thread_tb1(void);
 void idle(void);
-void thread_tb0(void);
-void thread_tb2(void);
-void thread_tb3(void);
-void thread_tb4(void);
 void test_producer(void);
 void test_consumer(void);
 void test_setup(void);
 
+extern void init_hal(void);
+extern void init_timer(void);
+extern void init_tty(void);
+extern void test(void);
+extern void ttyd(void);
+extern void messq_init();
 extern ListHead *runq_head;
-extern PCB*	current;
+//extern PCB*	current;
 #define NBUF 5
 int buf[NBUF], f = 0, r = 0, g = 1, tid = 1;
 //int pid=1;
@@ -28,14 +33,14 @@ os_init(void) {
 	init_idt();
 	init_i8259();
 	init_pcbpool();
-	test_setup();
-/*
-	wakeup(create_kthread((void*)thread_tb0));
-	wakeup(create_kthread((void*)thread_tb1));
-	wakeup(create_kthread((void*)thread_tb2));
-	wakeup(create_kthread((void*)thread_tb3));
-	wakeup(create_kthread((void*)thread_tb4));
-*/
+	messq_init();
+
+	init_hal();
+	init_timer();
+	init_tty();
+	create_kthread(ttyd);
+	test();
+
 	idle();
 }
 
@@ -46,41 +51,7 @@ entry(void) {
 
 	asm volatile("addl %0, %%esp" : : ""(KOFFSET));
 	next();
-	panic("init code should never return");
-}
-
-void
-thread_tb0(void){
-	while (TRUE) {
-		printk("now excute thread_0!\n");
-	}
-}
-
-void
-thread_tb1(void){
-	while(TRUE)
-	printk("now excute thread_1!\n");
-}
-void
-thread_tb2(void){
-	while(TRUE)
-	{
-	printk("now excute thread_2!\n");
-	sleep();
-	}
-}
-void
-thread_tb3(void){
-	while (TRUE) {
-	printk("now excute thread_3!\n");
-	}
-}
-void
-thread_tb4(void){
-	while (TRUE) {
-	printk("now excute thread_4!\n");
-	}
-}
+	panic("init code should never return"); }
 
 void
 idle(void){

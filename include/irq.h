@@ -3,6 +3,7 @@
 
 void init_idt(void);
 void init_i8259(void);
+void add_irq_handle(uint32_t irq,void (*ptr) (void) );
 
 // interrupt and exception entries
 void irq0();

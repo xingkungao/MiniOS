@@ -1,9 +1,11 @@
-#include "thread.h"
+//#include "thread.h"
 #include "debug.h"
 #include "x86.h"
+#include "thread.h"
 
 PCB pcb[NR_PCB];
 PCB* current=&pcb[0];
+static int nr_pcb_created;
 ListHead freelist;
 
 //the very first pcb is for thread idle, thus no initialization is needed
@@ -36,6 +38,9 @@ PCB* create_kthread(void *entry){
 	//one pcb is taken from the pcb pool
 	list_del(freeq_head->next);
 
+	newpcb->pid=nr_pcb_created++;
+	new_sem(&newpcb->message,1);
+
 	//we need to konw the exact location in the pcb of the thread's trapframe
 	tf=(TrapFrame *)(newpcb->kstack+STK_SZ)-1;
 	newpcb->tf=tf;
@@ -55,9 +60,9 @@ PCB* create_kthread(void *entry){
 
 
 void schedule(void){
-	current=list_entry(current.runq->next,PCB,runq);
+	current=list_entry(current->runq.next,PCB,runq);
 	if(current == &pcb[0])
-		current=list_entry(current.runq->next,PCB,runq);
+		current=list_entry(current->runq.next,PCB,runq);
 }
 
 void sleep(void){
@@ -75,48 +80,13 @@ void wakeup(PCB *pcb){
 	unlock();
 }
 
-PCB* find_pcb_pid(pid_T pid){
+PCB* find_pcb_pid(pid_t pid){
 	int i;
-	for(i=0;i<NR_PCB_CREATED;i++){
+	for(i=0;i<nr_pcb_created;i++){
 		if(pcb[i].pid == pid)
 		      return &pcb[i];
 	}
 	return NULL;
 }
-	
-void 
-new_sem(Semaphore *sem,int value){
-	sem->count=value;
-	list_init(&sem->queue);
-}
 
-void 
-P(Semaphore *sem){
-	lock();
-	NOINTR;
-	sem->count--;
-	if(sem->count < 0){
-		list_add_before(&sem->queue,&current->semq);
-//		printk("sleep one\n");
-		sleep();
-	}
-	unlock();
-	INTR;
-}
-
-void 
-V(Semaphore *sem){
-	lock();
-	NOINTR;
-	sem->count++;
-	if(sem->count <= 0){
-		assert(!list_empty(&sem->queue));
-		PCB *pcb=list_entry(sem->queue.next,PCB,semq);
-		list_del(sem->queue.next);
-//		printk("wake one\n");
-		wakeup(pcb);
-	}
-	unlock();
-	INTR;
-}
 
