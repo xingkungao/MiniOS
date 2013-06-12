@@ -37,7 +37,7 @@ void add_irq_handle(uint32_t irq, void (*ptr)(void)){
 void irq_handle(TrapFrame *tf) {
 	//volatile pid_t temp;
 	pid_t temp;
-	cli();
+//	cli();
 //	nestlevel++;
 
 //	TrapFrame *temp;

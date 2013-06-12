@@ -10,8 +10,8 @@ Message *front=&msg_pool[0];
 Message *rear=&msg_pool[0];
 
 static size_t
-length_of_msg() {
-	return (rear-front)/sizeof(Message);
+length_of_msgq() {
+	return ((unsigned)rear-(unsigned)front)/sizeof(Message);
 }
 
 static void 
@@ -21,7 +21,7 @@ copy_message(Message* dst,Message *src) {
 
 static void 
 put_message(Message *src) {
-	if(length_of_msg() == NR_MSG)
+	if(length_of_msgq() == NR_MSG)
 	     panic("no room for more message!\n"); 
 	copy_message(rear,src);
 	rear++;
@@ -30,7 +30,7 @@ put_message(Message *src) {
 static Message*
 search_message(pid_t src_id,pid_t dst_id) {
 	Message *msg;
-	assert(length_of_msg());
+	assert(length_of_msgq());
 	if(src_id == ANY){
 		for( msg = front; msg < rear; msg++ ) {
 			if(msg->dest == dst_id)
@@ -48,6 +48,7 @@ search_message(pid_t src_id,pid_t dst_id) {
 }
 static void 
 take_message(pid_t pid,Message *dst) {
+	assert(0 != length_of_msgq());
 	Message *src=search_message(pid,current->pid);
 	Message *ptr=src;
 	assert(src!=NULL);
@@ -68,15 +69,17 @@ send(pid_t pid, Message *m){
 	PCB *pcb=find_pcb_pid(pid);
 	if( pcb == NULL ){
 
-		unlock();
+		printk("send found no pcb by pid");
+		unlock();  
 	      	return;
 	}
-	if( pcb->message.count<0 ){
+	if( pcb->message.count <= -1 ){
 		printk("send while waiting,derectly copy %d->%d\n",current->pid,pid);
 	      copy_message(pcb->message_addr,m);
 	}
 	else{
 		printk("send while not waiting,enqueue %d->%d\n",current->pid,pid);
+		printk("will put msg\n");
 	      put_message(m);
 	}
 	V(&pcb->message);
@@ -88,16 +91,17 @@ void
 receive(pid_t pid,Message *m){
 	lock();
 	NOINTR;
-	if(current->message.count > 0){
+	if(current->message.count >= 1){
 		P(&current->message);
-		printk("%d\n",current->message.count);
-		printk("receive while dequeue %d->%d\n",pid,current->pid);
+		printk("send: have sems: %d\n",current->message.count);
+		printk("try receive while dequeue %d<-%d\n",current->pid,pid);
 		NOINTR;
 		take_message(pid,m);
+		printk("have receive from dequeue %d<-%d\n",m->dest,m->src);
 	}
 	else{
 		current->message_addr=m;
-		printk("receive directly %d->%d\n",pid,current->pid);
+		printk("receive directly %d<-%d\n",current->pid,pid);
 		P( &current->message);
 	}
 	unlock();
