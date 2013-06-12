@@ -35,36 +35,54 @@ void add_irq_handle(uint32_t irq, void (*ptr)(void)){
 }
 
 void irq_handle(TrapFrame *tf) {
-	printk("now comes a interrupt!\n");
+	//volatile pid_t temp;
+	pid_t temp;
 	cli();
 //	nestlevel++;
 
 //	TrapFrame *temp;
 	int irq = tf->irq;
 	assert(irq >= 0);
+	current->tf = tf;
 
 	if(irq <1000 && irq !=0x80) {
-		cli();
 		printk("Unexpected exception #%d\n", irq);
 		printk(" errorcode %x\n", tf->err);
 		printk(" location  %d:%x, esp %x\n", tf->cs, tf->eip, tf);
 		panic("unexpected exception");	
 	}
 	else if(irq == 0x80) {
+		printk("now comes a int 80   exception\n");
+	      	schedule();
 	}
+
 	else if(irq == 1000) {
+		printk("now comes a time     interrupt!\n");
+		temp = current->pid ;
+		current->pid = MSG_HWINTR;
 		do_timer_1();
 		do_timer_2();
 		do_timer_3();
-	}
-	else if (irq == 1001) {
-		do_keyboard();
-	}
+		current->pid =temp;
 	if(need_sched){
 		printk("time to schedule\n");
+		need_sched=FALSE;
 	      schedule();
 	}
-
+	}
+	else if (irq == 1001) {
+		printk("now comes a keyboard interrupt!\n");
+		temp = current->pid ;
+		current->pid = MSG_HWINTR;
+		do_keyboard();
+		current->pid =temp;
+	}
+/*	if(need_sched){
+		printk("time to schedule\n");
+		need_sched=FALSE;
+	      schedule();
+	}
+	*/
 	//cli();
 	//nestlevel--;
 	//sti();
@@ -72,7 +90,11 @@ void irq_handle(TrapFrame *tf) {
 
 
 /*
+void irq_handle(TrapFrame *tf) {
+	int irq = tf -> irq;
+	assert(irq >= 0);
 	if (irq >= 1000 || irq == 0x80 ) {
+	printk("now comes a interrupt!\n");
 
 		// int 0x80 exception or external interrupt
 		cli();
@@ -86,11 +108,6 @@ void irq_handle(TrapFrame *tf) {
 
 		//store the exact location in the pcb of the current thread's trapframe
 		current->tf=tf;
-		temp=tf;
-		sti();
-
-		cli();
-		current->tf=temp;
 	//	sti();
 
 		//switch current to next pcb in runq_head. Use "FCFS" strategy for scheduling. 

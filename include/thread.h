@@ -54,6 +54,7 @@ PCB* find_pcb_pid(pid_t pid);
 PCB* create_kthread(void *entry);
 void sleep(void);
 void wakeup(PCB *pcb);
+PCB* set_pid(PCB *pcb,pid_t pid);
 
 
 static inline void

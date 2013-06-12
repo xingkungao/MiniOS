@@ -1,0 +1,178 @@
+#include "thread.h"
+#include "string.h"
+#include "message.h"
+#include "debug.h"
+#include "x86.h"
+#include "kernel.h"
+
+static Message msg_pool[NR_MSG];
+//static uint32_t ptr;
+static ListHead message_avaq;
+static ListHead message_freeq;
+//static boolean wait_flag[NR_MSG];
+
+
+void
+messq_init(void){
+	int i = 0;
+	list_init(&message_freeq);
+	list_init(&message_avaq);
+
+	for (;i < NR_MSG; i++ )
+	      list_add_before(&message_freeq,&msg_pool[i].freeq);
+	assert( !list_empty(&message_freeq) );
+	printk("%x\n", message_avaq.next);
+}
+
+static void 
+copy_message(Message* dst,Message *src) {
+	printk("copy_message:now compy a message\n");
+       	memcpy((void *)dst,(void *)src,sizeof(Message));
+}
+
+static void 
+put_message(Message *src) {
+	Message *msg;
+	printk("put_message:arrive putmassge\n");
+	if(list_empty(&message_freeq))
+	      panic("Message queue is full!");
+	msg=list_entry(&message_freeq.next,Message,freeq);
+	printk("%x\n",msg);
+	list_del(&msg->freeq);
+	list_add_before(&message_avaq,msg->avaq.next);
+	printk("%x \n",message_avaq.next);
+	ListHead *it;
+	list_foreach(it,&message_avaq)
+		printk("%x",it);
+
+	copy_message(msg,src);
+}
+
+static Message*
+search_message(pid_t src_id,pid_t dst_id) {
+	printk("search_message:arrive search_message\n");
+	Message *msg;
+	ListHead *it;
+	assert(!list_empty(&message_avaq));
+	if(src_id == ANY){
+	printk("search_message: ANY\n ");
+		list_foreach(it,&message_avaq) {
+			msg=list_entry(it,Message,avaq);
+			if(msg->dest == dst_id ){
+				printk("search_message:search found\n");
+		      		return msg;
+			}
+		}
+	}
+	else{
+	printk("search_message:NOT ANY\n ");
+	NOINTR;
+		list_foreach(it,&message_avaq) {
+
+			printk("%x\n",(unsigned)&message_avaq);
+			printk("%x\n",(unsigned)message_avaq.next);
+			msg=list_entry(it,Message,avaq);
+			printk("%x\n",(unsigned) msg);
+			printk("arrive middle fj dskfj skdfj skfj klsdjfkl dsjfksaf kldsjf k\n");
+			printk("%x,%d->%d",(unsigned ) msg,msg->src,msg->dest);
+			printk("arrive middle fj dskfj skdfj skfj klsdjfkl dsjfksaf kldsjf k\n");
+			printk("%d->%d",msg->src,msg->dest);
+			if(msg->dest == dst_id && msg->src == src_id ){
+				printk("search found\n");
+		      		return msg;
+			}
+		}
+	}
+	printk("search_message: not found pcb,have to return null\n");
+
+	return NULL;
+}
+static void 
+take_message(pid_t pid,Message *dst) {
+	ListHead *it;
+	list_foreach(it,&message_avaq) {
+		printk("%x\n",(unsigned )it);
+	}
+	printk("take_message:arrive take_message\n");
+	Message *src=search_message(pid,current->pid);
+	printk("take_message:calling search_message return  sucess\n");
+	assert(!src);
+	
+        copy_message(dst,src);
+	list_del(&src->avaq);
+	list_add_before(&message_freeq,&src->freeq);
+}
+
+
+
+
+	
+/*
+find_message(pid_t pid) {
+	if
+void
+add_message(Message* m) {
+	if (ptr == NR_MSG)
+	      panic("Message queue full!\n");
+	copy_message(&pcb_pool[ptr++],m);
+}
+
+void
+take_message() {
+	assert(ptr < NR_MSG);
+	copy_message(m,
+*/
+
+void 
+send(pid_t pid, Message *m){
+	m->src = current->pid;
+	m->dest = pid;
+	printk("send:src:%d->dst:%d\n",m->src,m->dest);
+	lock();
+	PCB *pcb=find_pcb_pid(pid);
+	if( pcb == NULL ){
+		unlock();
+		printk("sned: dest pcb not found.fuck\n");
+	      return;
+	}
+	if( pcb->message.count<0 ){
+
+		printk("send: dest pcb is waiting \n");
+	      copy_message(pcb->message_addr,m);
+	}
+	else{
+		printk("send: dest pcb not waiting,put to queue \n");
+	      
+	      put_message(m);
+	}
+	V(&pcb->message);
+	NOINTR;
+	printk("send: dest_messge_count %d\n",pcb->message.count);
+ListHead *it;
+	printk("%x",message_avaq.next);
+	list_foreach(it,&message_avaq) {
+		printk("%x ,%x \n",it,list_entry(it,Message,avaq));
+	}
+	unlock();
+}
+
+void 
+receive(pid_t pid,Message *m){
+	lock();
+	NOINTR;
+	printk("receive: now %d <- %d\n",current->pid,pid);
+	if(current->message.count > 0){
+		printk("receive: exist pcb  send to me ,direct copy\n");
+		P(&current->message);
+	printk("%d\n",current->message.count);
+		printk("ready to copy\n");
+		NOINTR;
+		take_message(pid,m);
+	}
+	else{
+		printk("no message for me.sleep\n");
+		current->message_addr=m;
+		P( &current->message);
+	}
+	unlock();
+}

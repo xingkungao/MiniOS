@@ -19,7 +19,8 @@ void init_hal(void) {
 	list_init(&devices);
 }
 
-void hal_register(const char *name, pid_t pid, int dev_id) { lock();
+void hal_register(const char *name, pid_t pid, int dev_id) {
+       	lock();
 	if (list_empty(&free)) {
 		panic("no room for more device");
 	}

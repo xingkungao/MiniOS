@@ -6,13 +6,12 @@
 struct Message{
 	pid_t src,dest;
 	size_t type;
-	ListHead avaq;
-	ListHead freeq;
-	char payload[8];
+//	ListHead avaq;
+//	ListHead freeq;
+	char payload[16];
 };
 typedef struct Message Message;
 
-void messq_init(void);
 void send(int pid, struct Message *m);
 void receive(int pid, struct Message *m);
 

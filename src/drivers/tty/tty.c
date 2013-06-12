@@ -3,7 +3,7 @@
 #include "irq.h"
 #include "debug.h"
 
-pid_t TTY;
+pid_t TTY=111;
 
 void init_tty(void);
 void ttyd(void);

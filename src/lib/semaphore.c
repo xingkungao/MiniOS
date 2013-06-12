@@ -17,7 +17,6 @@ P(Semaphore *sem){
                 sleep();
 	}
 	unlock();
-	INTR;
 }
 
 void 
@@ -32,6 +31,5 @@ V(Semaphore *sem){
 	        wakeup(pcb);
        }
        unlock();
-       INTR;
 }
 

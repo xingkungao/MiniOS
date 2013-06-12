@@ -12,13 +12,15 @@ void idle(void);
 void test_producer(void);
 void test_consumer(void);
 void test_setup(void);
+//void A(void);
+//void B(void);
 
 extern void init_hal(void);
 extern void init_timer(void);
 extern void init_tty(void);
 extern void test(void);
 extern void ttyd(void);
-extern void messq_init();
+extern pid_t TTY;
 extern ListHead *runq_head;
 //extern PCB*	current;
 #define NBUF 5
@@ -33,14 +35,16 @@ os_init(void) {
 	init_idt();
 	init_i8259();
 	init_pcbpool();
-	messq_init();
 
 	init_hal();
 	init_timer();
 	init_tty();
-	create_kthread(ttyd);
+	wakeup(set_pid(create_kthread(ttyd),TTY));
 	test();
 
+
+//	wakeup(create_kthread(A));
+//	wakeup(create_kthread(B));
 	idle();
 }
 
@@ -59,6 +63,24 @@ idle(void){
 	sti();
 	while (TRUE) {
 		wait_intr();
+	}
+}
+void
+A(void){
+	while(1){
+		Message m;
+		send(2,&m);
+		printk("A:a send to b\n");
+		receive(2,&m);
+	}
+}
+void
+B(void){
+	while(1){
+		Message m;
+		printk("B:b try receive from a\n");
+		receive(1,&m);
+		send(1,&m);
 	}
 }
 

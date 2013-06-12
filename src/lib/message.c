@@ -6,102 +6,99 @@
 #include "kernel.h"
 
 static Message msg_pool[NR_MSG];
-//static uint32_t ptr;
-static ListHead message_avaq;
-static ListHead message_freeq;
-//static boolean wait_flag[NR_MSG];
+Message *front=&msg_pool[0];
+Message *rear=&msg_pool[0];
 
-
-void
-messq_init(void){
-	int i = 0;
-	list_init(&message_freeq);
-	list_init(&message_avaq);
-
-	for (;i < NR_MSG; i++ )
-	      list_add_before(&message_freeq,&msg_pool[i].freeq);
-	assert( !list_empty(&message_freeq) );
+static size_t
+length_of_msg() {
+	return (rear-front)/sizeof(Message);
 }
 
 static void 
 copy_message(Message* dst,Message *src) {
-	printk("now compy a message");
-	memcpy((void *)dst,(void *)src,sizeof(Message));
+       	memcpy((void *)dst,(void *)src,sizeof(Message));
 }
 
 static void 
 put_message(Message *src) {
-	Message *msg;
-	if(list_empty(&message_freeq) )
-	      panic("Message queue is full!");
-	msg=list_entry(&message_freeq.next,Message,freeq);
-	list_del(&msg->freeq);
-	list_add_before(&message_avaq,&msg->avaq);
-	copy_message(msg,src);
+	if(length_of_msg() == NR_MSG)
+	     panic("no room for more message!\n"); 
+	copy_message(rear,src);
+	rear++;
 }
 
 static Message*
-search_message(pid_t pid) {
+search_message(pid_t src_id,pid_t dst_id) {
 	Message *msg;
-	ListHead *it;
-	assert(!list_empty(&message_avaq));
-
-	list_foreach(it,&message_avaq) {
-		msg=list_entry(it,Message,freeq);
-		if(msg->dest == pid ){
-		      return msg;
+	assert(length_of_msg());
+	if(src_id == ANY){
+		for( msg = front; msg < rear; msg++ ) {
+			if(msg->dest == dst_id)
+			      return msg;
+		}
+	}
+	else{
+		for (msg = front;msg < rear;msg++) {
+			if(msg->dest == dst_id && msg->src == src_id ){
+		      		return msg;
+			}
 		}
 	}
 	return NULL;
 }
 static void 
-take_message(Message *dst) {
-	Message *src=search_message(current->pid);
-	assert(!src);
-        copy_message(dst,src);
-	list_del(&src->avaq);
-}
-
-
-
-
+take_message(pid_t pid,Message *dst) {
+	Message *src=search_message(pid,current->pid);
+	Message *ptr=src;
+	assert(src!=NULL);
 	
-/*
-find_message(pid_t pid) {
-	if
-void
-add_message(Message* m) {
-	if (ptr == NR_MSG)
-	      panic("Message queue full!\n");
-	copy_message(&pcb_pool[ptr++],m);
+        copy_message(dst,src);
+	for (;ptr < rear;ptr++)
+	      *(ptr)=*(ptr+1);
+	rear--;
 }
-
-void
-take_message() {
-	assert(ptr < NR_MSG);
-	copy_message(m,
-*/
 
 void 
 send(pid_t pid, Message *m){
+	m->src = current->pid;
+	m->dest = pid;
+	if( m->src == MSG_HWINTR)
+	      printk("source is msg_hwintr\n");
+	lock();
 	PCB *pcb=find_pcb_pid(pid);
-	if( pcb == NULL )
-	      return;
-	if( pcb->message.count<0 )
+	if( pcb == NULL ){
+
+		unlock();
+	      	return;
+	}
+	if( pcb->message.count<0 ){
+		printk("send while waiting,derectly copy %d->%d\n",current->pid,pid);
 	      copy_message(pcb->message_addr,m);
-	else
+	}
+	else{
+		printk("send while not waiting,enqueue %d->%d\n",current->pid,pid);
 	      put_message(m);
+	}
 	V(&pcb->message);
+	NOINTR;
+	unlock();
 }
 
 void 
 receive(pid_t pid,Message *m){
+	lock();
+	NOINTR;
 	if(current->message.count > 0){
 		P(&current->message);
-		take_message(m);
+		printk("%d\n",current->message.count);
+		printk("receive while dequeue %d->%d\n",pid,current->pid);
+		NOINTR;
+		take_message(pid,m);
 	}
 	else{
 		current->message_addr=m;
+		printk("receive directly %d->%d\n",pid,current->pid);
 		P( &current->message);
 	}
+	unlock();
 }

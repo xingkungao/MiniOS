@@ -5,7 +5,7 @@
 
 PCB pcb[NR_PCB];
 PCB* current=&pcb[0];
-static int nr_pcb_created;
+static int nr_pcb_created=1;
 ListHead freelist;
 
 //the very first pcb is for thread idle, thus no initialization is needed
@@ -14,10 +14,11 @@ ListHead *freeq_head=&freelist, *runq_head=&pcb[0].runq;
 void init_pcbpool(void){
 	int i=1;
 
+	current->pid =0;
 	list_init(freeq_head);
         //now we orgnize the pcb array as a double list
 	for(;i<NR_PCB;i++){
-		list_add_after(freeq_head,&pcb[i].freeq);
+		list_add_before(freeq_head,&pcb[i].freeq);
 	}
 	assert(!list_empty(freeq_head));
 
@@ -28,9 +29,7 @@ void init_pcbpool(void){
 
 PCB* create_kthread(void *entry){
 	PCB* newpcb;
-	TrapFrame *tf;
-
-	//allocate a memory for the new pcb form pcb pool
+	TrapFrame *tf; //allocate a memory for the new pcb form pcb pool
 	newpcb=list_entry(freeq_head->next,PCB,freeq);
 
 //	printk("address af the allocating pcb:    %x\n",(unsigned int)newpcb);
@@ -39,7 +38,7 @@ PCB* create_kthread(void *entry){
 	list_del(freeq_head->next);
 
 	newpcb->pid=nr_pcb_created++;
-	new_sem(&newpcb->message,1);
+	new_sem(&newpcb->message,0);
 
 	//we need to konw the exact location in the pcb of the thread's trapframe
 	tf=(TrapFrame *)(newpcb->kstack+STK_SZ)-1;
@@ -52,6 +51,9 @@ PCB* create_kthread(void *entry){
 	tf->cs=KSEL(SEG_KCODE);
 	tf->eflags=0x200;
 	tf->eip=(unsigned)entry;
+	printk("pid %d\n",newpcb->pid);
+	
+
 	
 //	printk("address of the allocating pcb->tf:%x\n\n",(unsigned int)newpcb->tf);
 
@@ -82,11 +84,18 @@ void wakeup(PCB *pcb){
 
 PCB* find_pcb_pid(pid_t pid){
 	int i;
+//	printk("%d\n",nr_pcb_created);
 	for(i=0;i<nr_pcb_created;i++){
+//		printk("the pid is %d\n",pcb[i].pid);
 		if(pcb[i].pid == pid)
 		      return &pcb[i];
 	}
+	printk("not found pcb by pid");
 	return NULL;
 }
-
+PCB*
+set_pid(PCB* pcb,pid_t pid){
+	pcb->pid=pid;
+	return pcb;
+}
 
