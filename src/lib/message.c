@@ -8,9 +8,11 @@
 static Message msg_pool[NR_MSG];
 Message *front=&msg_pool[0];
 Message *rear=&msg_pool[0];
+extern boolean intr_flag;
 
 static size_t
 length_of_msgq() {
+//	printk(" the length is %d\n", ((unsigned)rear-(unsigned)front)/sizeof(Message));
 	return ((unsigned)rear-(unsigned)front)/sizeof(Message);
 }
 
@@ -48,7 +50,7 @@ search_message(pid_t src_id,pid_t dst_id) {
 }
 static void 
 take_message(pid_t pid,Message *dst) {
-	assert(0 != length_of_msgq());
+	assert(length_of_msgq());
 	Message *src=search_message(pid,current->pid);
 	Message *ptr=src;
 	assert(src!=NULL);
@@ -58,28 +60,28 @@ take_message(pid_t pid,Message *dst) {
 	      *(ptr)=*(ptr+1);
 	rear--;
 }
-
 void 
 send(pid_t pid, Message *m){
 	m->src = current->pid;
 	m->dest = pid;
-	if( m->src == MSG_HWINTR)
-	      printk("source is msg_hwintr\n");
 	lock();
+	if (intr_flag)
+	      m->src = MSG_HWINTR;
+	//if( m->src == MSG_HWINTR)
+	      //printk("source is msg_hwintr\n");
 	PCB *pcb=find_pcb_pid(pid);
 	if( pcb == NULL ){
-
-		printk("send found no pcb by pid");
+	//	printk("send found no pcb by pid\n");
 		unlock();  
 	      	return;
 	}
 	if( pcb->message.count <= -1 ){
-		printk("send while waiting,derectly copy %d->%d\n",current->pid,pid);
+	//	printk("send while waiting,derectly copy %d->%d\n",current->pid,pid);
 	      copy_message(pcb->message_addr,m);
 	}
 	else{
-		printk("send while not waiting,enqueue %d->%d\n",current->pid,pid);
-		printk("will put msg\n");
+	//	printk("send while not waiting,enqueue %d->%d\n",current->pid,pid);
+	//	printk("will put msg\n");
 	      put_message(m);
 	}
 	V(&pcb->message);
@@ -93,15 +95,15 @@ receive(pid_t pid,Message *m){
 	NOINTR;
 	if(current->message.count >= 1){
 		P(&current->message);
-		printk("send: have sems: %d\n",current->message.count);
-		printk("try receive while dequeue %d<-%d\n",current->pid,pid);
+		//printk("send: have sems: %d\n",current->message.count);
+		//printk("try receive while dequeue %d<-%d\n",current->pid,pid);
 		NOINTR;
 		take_message(pid,m);
-		printk("have receive from dequeue %d<-%d\n",m->dest,m->src);
+		//printk("have receive from dequeue %d<-%d\n",m->dest,m->src);
 	}
 	else{
 		current->message_addr=m;
-		printk("receive directly %d<-%d\n",current->pid,pid);
+		//printk("receive directly %d<-%d\n",current->pid,pid);
 		P( &current->message);
 	}
 	unlock();

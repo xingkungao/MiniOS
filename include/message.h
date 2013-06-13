@@ -2,7 +2,7 @@
 #define __MESSAGE_H__
 
 #include "adt/list.h"
-#define NR_MSG 128
+#define NR_MSG 512 
 struct Message{
 	pid_t src,dest;
 	size_t type;

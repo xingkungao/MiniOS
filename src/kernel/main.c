@@ -12,8 +12,8 @@ void idle(void);
 void test_producer(void);
 void test_consumer(void);
 void test_setup(void);
-//void A(void);
-//void B(void);
+void A(void);
+void B(void);
 
 extern void init_hal(void);
 extern void init_timer(void);
@@ -40,6 +40,7 @@ os_init(void) {
 	init_timer();
 	init_tty();
 	wakeup(set_pid(create_kthread(ttyd),TTY));
+	printk("next\n");
 	test();
 
 
@@ -67,19 +68,28 @@ idle(void){
 }
 void
 A(void){
+
+		int a=0;
 	while(1){
-		Message m;
-		send(2,&m);
-		printk("A:a send to b\n");
-		receive(2,&m);
+		Message m1,m2;
+		m1.type=a++;
+		send(2,&m1);
+		m2.type=a++;
+		printk("					A:a send to b m1\n");
+		send(2,&m2);
+		printk("					A:a send to b m2\n");
+		receive(2,&m1);
+		printk("							A:a rece fr b m1  %d\n",m1.type);
+		receive(2,&m2);
+		printk("							A:a rece fr b m2  %d\n",m2.type);
 	}
 }
 void
 B(void){
 	while(1){
 		Message m;
-		printk("B:b try receive from a\n");
 		receive(1,&m);
+		printk("B:					b try receive from a %d\n",m.type);
 		send(1,&m);
 	}
 }
