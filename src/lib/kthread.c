@@ -5,7 +5,7 @@
 
 PCB pcb[NR_PCB];
 PCB* current=&pcb[0];
-static int nr_pcb_created=1;
+static int nr_pcb_created=2;
 ListHead freelist;
 
 //the very first pcb is for thread idle, thus no initialization is needed
@@ -14,7 +14,7 @@ ListHead *freeq_head=&freelist, *runq_head=&pcb[0].runq;
 void init_pcbpool(void){
 	int i=1;
 
-	current->pid =0;
+	current->pid = 1;
 	list_init(freeq_head);
         //now we orgnize the pcb array as a double list
 	for(;i<NR_PCB;i++){
@@ -62,9 +62,11 @@ PCB* create_kthread(void *entry){
 
 
 void schedule(void){
+//	cli();
 	current=list_entry(current->runq.next,PCB,runq);
 	if(current == &pcb[0])
 		current=list_entry(current->runq.next,PCB,runq);
+//	sti();
 }
 
 void sleep(void){

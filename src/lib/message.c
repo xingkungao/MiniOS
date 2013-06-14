@@ -12,7 +12,6 @@ extern boolean intr_flag;
 
 static size_t
 length_of_msgq() {
-//	printk(" the length is %d\n", ((unsigned)rear-(unsigned)front)/sizeof(Message));
 	return ((unsigned)rear-(unsigned)front)/sizeof(Message);
 }
 
@@ -67,21 +66,18 @@ send(pid_t pid, Message *m){
 	lock();
 	if (intr_flag)
 	      m->src = MSG_HWINTR;
-	//if( m->src == MSG_HWINTR)
-	      //printk("source is msg_hwintr\n");
+	if( m->src == MSG_HWINTR)
+	      printk("source is msg_hwintr\n");
 	PCB *pcb=find_pcb_pid(pid);
-	if( pcb == NULL ){
-	//	printk("send found no pcb by pid\n");
-		unlock();  
-	      	return;
-	}
+	if( pcb == NULL )
+		panic("No pcb by this pid!\n");
 	if( pcb->message.count <= -1 ){
-	//	printk("send while waiting,derectly copy %d->%d\n",current->pid,pid);
+		printk("send while waiting,derectly copy %d->%d\n",current->pid,pid);
 	      copy_message(pcb->message_addr,m);
 	}
 	else{
-	//	printk("send while not waiting,enqueue %d->%d\n",current->pid,pid);
-	//	printk("will put msg\n");
+		printk("send while not waiting,enqueue %d->%d\n",current->pid,pid);
+		printk("will put msg\n");
 	      put_message(m);
 	}
 	V(&pcb->message);
@@ -95,15 +91,15 @@ receive(pid_t pid,Message *m){
 	NOINTR;
 	if(current->message.count >= 1){
 		P(&current->message);
-		//printk("send: have sems: %d\n",current->message.count);
-		//printk("try receive while dequeue %d<-%d\n",current->pid,pid);
+		printk("send: have sems: %d\n",current->message.count);
+		printk("try receive while dequeue %d<-%d\n",current->pid,pid);
 		NOINTR;
 		take_message(pid,m);
-		//printk("have receive from dequeue %d<-%d\n",m->dest,m->src);
+		printk("have receive from dequeue %d<-%d\n",m->dest,m->src);
 	}
 	else{
 		current->message_addr=m;
-		//printk("receive directly %d<-%d\n",current->pid,pid);
+		printk("receive directly %d<-%d\n",current->pid,pid);
 		P( &current->message);
 	}
 	unlock();
