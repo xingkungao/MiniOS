@@ -62,11 +62,9 @@ PCB* create_kthread(void *entry){
 
 
 void schedule(void){
-//	cli();
 	current=list_entry(current->runq.next,PCB,runq);
 	if(current == &pcb[0])
 		current=list_entry(current->runq.next,PCB,runq);
-//	sti();
 }
 
 void sleep(void){

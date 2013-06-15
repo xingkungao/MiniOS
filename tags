@@ -37,7 +37,7 @@ GDT_ENTRY	boot/asm.h	2;"	d
 GateDesc	include/x86.h	/^struct GateDesc {$/;"	s
 GateDesc	include/x86.h	/^typedef struct GateDesc GateDesc;$/;"	t	typeref:struct:GateDesc
 HZ	include/headers/time.h	8;"	d
-INTR	include/thread.h	74;"	d
+INTR	include/thread.h	75;"	d
 KOFFSET	include/vm.h	4;"	d
 KSEL	include/x86.h	52;"	d
 K_ALT	include/headers/term.h	8;"	d
@@ -80,8 +80,8 @@ Message	include/message.h	/^struct Message{$/;"	s
 Message	include/message.h	/^typedef struct Message Message;$/;"	t	typeref:struct:Message
 MsgHead	include/headers/hal.h	/^struct MsgHead{$/;"	s
 MsgHead	include/headers/hal.h	/^typedef struct MsgHead MsgHead;$/;"	t	typeref:struct:MsgHead
-NBUF	src/kernel/main.c	27;"	d	file:
-NOINTR	include/thread.h	76;"	d
+NBUF	src/kernel/main.c	26;"	d	file:
+NOINTR	include/thread.h	77;"	d
 NR_DEV	src/drivers/hal.c	7;"	d	file:
 NR_IRQ	include/x86.h	56;"	d
 NR_MSG	include/message.h	5;"	d
@@ -153,7 +153,7 @@ Semaphore	include/semaphore.h	/^typedef struct Semaphore Semaphore;$/;"	t	typere
 TRUE	include/const.h	4;"	d
 TSS	include/x86.h	/^struct TSS {$/;"	s
 TSS	include/x86.h	/^typedef struct TSS TSS;$/;"	t	typeref:struct:TSS
-TTY	src/drivers/tty/tty.c	/^pid_t TTY;$/;"	v
+TTY	src/drivers/tty/tty.c	/^pid_t TTY=1024;$/;"	v
 Time	include/headers/time.h	/^struct Time {$/;"	s
 Time	include/headers/time.h	/^typedef struct Time Time;$/;"	t	typeref:struct:Time
 TrapFrame	include/x86.h	/^struct TrapFrame {$/;"	s
@@ -186,7 +186,6 @@ alt	src/drivers/tty/keyboard.c	/^static int caps, ctrl, alt, shft;$/;"	v	file:
 ani	src/drivers/tty/banner.c	/^static char ani[] = "-\\\\|\/";$/;"	v	file:
 args	include/x86.h	/^	uint32_t args : 5;        \/\/ # args, 0 for interrupt\/trap gates$/;"	m	struct:GateDesc
 assert	include/assert.h	6;"	d
-avaq	include/message.h	/^	ListHead avaq;$/;"	m	struct:Message
 avl	include/x86.h	/^	uint32_t avl : 1;        \/\/ Unused (available for software use)$/;"	m	struct:SegDesc
 backsp	src/drivers/tty/console.c	/^backsp(Console *c) {$/;"	f	file:
 banner	src/drivers/tty/console.c	/^char banner[SCR_W + 1];$/;"	v
@@ -265,9 +264,9 @@ flags	boot/boot.h	/^	unsigned int   flags;$/;"	m	struct:ELFHeader
 flags	boot/boot.h	/^	unsigned int flags;$/;"	m	struct:ProgramHeader
 free	src/drivers/hal.c	/^static ListHead free, devices;$/;"	v	file:
 freelist	src/lib/kthread.c	/^ListHead freelist;$/;"	v
-freeq	include/message.h	/^	ListHead freeq;$/;"	m	struct:Message
 freeq	include/thread.h	/^	ListHead 	runq, freeq;$/;"	m	struct:PCB
 freeq_head	src/lib/kthread.c	/^ListHead *freeq_head=&freelist, *runq_head=&pcb[0].runq;$/;"	v
+front	src/lib/message.c	/^Message *front=&msg_pool[0];$/;"	v
 fs	include/x86.h	/^	uint32_t gs, fs, es, ds;       \/\/ Segment register$/;"	m	struct:TrapFrame
 full	src/kernel/main.c	/^Semaphore empty, full, mutex;$/;"	v
 g	include/x86.h	/^	uint32_t g : 1;          \/\/ Granularity: limit scaled by 4K when set$/;"	m	struct:SegDesc
@@ -307,6 +306,7 @@ init_tty	src/drivers/tty/tty.c	/^void init_tty(void) {$/;"	f
 int16_t	include/types.h	/^typedef          short int16_t;$/;"	t
 int32_t	include/types.h	/^typedef          int   int32_t;$/;"	t
 int8_t	include/types.h	/^typedef          char  int8_t;$/;"	t
+intr_flag	src/kernel/irq/irq_handle.c	/^boolean intr_flag;$/;"	v
 irq	include/x86.h	/^	int      irq;                  \/\/ # of irq$/;"	m	struct:TrapFrame
 irq_handle	src/kernel/irq/irq_handle.c	/^void irq_handle(TrapFrame *tf) {$/;"	f
 isr_count	src/kernel/irq/irq_handle.c	/^uint32_t isr_count=0;$/;"	v
@@ -316,6 +316,7 @@ jiffy	src/drivers/time/timer.c	/^long jiffy = 0;$/;"	v
 keychar	src/drivers/tty/keyboard.c	/^int keychar[2][128] = {$/;"	v
 kstack	include/thread.h	/^	char 		kstack[STK_SZ];	\/\/stack in PCB$/;"	m	struct:PCB
 lbuf	include/headers/tty.h	/^	char lbuf[LBUF_SZ + 1];$/;"	m	struct:Console
+length_of_msgq	src/lib/message.c	/^length_of_msgq() {$/;"	f	file:
 lf	src/drivers/tty/console.c	/^lf(Console *c) {$/;"	f	file:
 lim_15_0	include/x86.h	/^	uint32_t lim_15_0 : 16;  \/\/ Low bits of segment limit$/;"	m	struct:SegDesc
 lim_19_16	include/x86.h	/^	uint32_t lim_19_16 : 4;  \/\/ High bits of segment limit$/;"	m	struct:SegDesc
@@ -339,9 +340,6 @@ memset	src/lib/string.c	/^memset(void *dst, int val, size_t count) {$/;"	f
 memsz	boot/boot.h	/^	unsigned int memsz;$/;"	m	struct:ProgramHeader
 message	include/thread.h	/^	Semaphore	message;$/;"	m	struct:PCB
 message_addr	include/thread.h	/^	Message*	message_addr;$/;"	m	struct:PCB
-message_avaq	src/lib/message.c	/^static ListHead message_avaq;$/;"	v	file:
-message_freeq	src/lib/message.c	/^static ListHead message_freeq;$/;"	v	file:
-messq_init	src/lib/message.c	/^messq_init(void){$/;"	f
 minute	include/headers/time.h	/^	int hour, minute, second;$/;"	m	struct:Time
 month	include/headers/time.h	/^	int year, month, day;$/;"	m	struct:Time
 movl	src/drivers/tty/console.c	/^movl(Console *c) {$/;"	f	file:
@@ -350,11 +348,12 @@ msg_pool	src/lib/message.c	/^static Message msg_pool[NR_MSG];$/;"	v	file:
 mutex	src/kernel/main.c	/^Semaphore empty, full, mutex;$/;"	v
 name	include/headers/hal.h	/^	const char *name;$/;"	m	struct:Device
 name	include/headers/tty.h	/^	const char *name;$/;"	m	struct:Console
-need_sched	src/kernel/irq/irq_handle.c	/^boolean need_sched=FALSE;$/;"	v
+need_sched	src/kernel/irq/irq_handle.c	/^volatile boolean need_sched=FALSE;$/;"	v
+nest_level	src/kernel/irq/irq_handle.c	/^static int32_t nest_level;$/;"	v	file:
 new_sem	src/lib/semaphore.c	/^new_sem(Semaphore *sem,int value){$/;"	f
 next	include/adt/list.h	/^	struct ListHead *prev, *next;$/;"	m	struct:ListHead	typeref:struct:ListHead::
 next	src/drivers/tty/console.c	/^next(Console *c) {$/;"	f	file:
-nr_pcb_created	src/lib/kthread.c	/^static int nr_pcb_created=1;$/;"	v	file:
+nr_pcb_created	src/lib/kthread.c	/^static int nr_pcb_created=2;$/;"	v	file:
 off	boot/boot.h	/^	unsigned int off;$/;"	m	struct:ProgramHeader
 off_15_0	include/x86.h	/^	uint32_t off_15_0 : 16;   \/\/ Low 16 bits of offset in segment$/;"	m	struct:GateDesc
 off_31_16	include/x86.h	/^	uint32_t off_31_16 : 16;  \/\/ High bits of offset in segment$/;"	m	struct:GateDesc
@@ -369,7 +368,7 @@ p	include/x86.h	/^	uint32_t p : 1;          \/\/ Present$/;"	m	struct:SegDesc
 pa_to_va	include/vm.h	8;"	d
 paddr	boot/boot.h	/^	unsigned int paddr;$/;"	m	struct:ProgramHeader
 panic	src/lib/abort.c	/^panic(const char *str) {$/;"	f
-payload	include/message.h	/^	char payload[8];$/;"	m	struct:Message
+payload	include/message.h	/^	char payload[16];$/;"	m	struct:Message
 pcb	src/lib/kthread.c	/^PCB pcb[NR_PCB];$/;"	v
 phentsize	boot/boot.h	/^	unsigned short phentsize;$/;"	m	struct:ELFHeader
 phnum	boot/boot.h	/^	unsigned short phnum;$/;"	m	struct:ELFHeader
@@ -391,6 +390,7 @@ readf	include/x86.h	/^readf(void) {$/;"	f
 readkey	src/drivers/tty/keyboard.c	/^readkey(void) {$/;"	f
 readsect	boot/main.c	/^readsect(void *dst, int offset) {$/;"	f
 readseg	boot/main.c	/^readseg(unsigned char *pa, int count, int offset) {$/;"	f
+rear	src/lib/message.c	/^Message *rear=&msg_pool[0];$/;"	v
 receive	src/lib/message.c	/^receive(pid_t pid,Message *m){$/;"	f
 removec	src/drivers/tty/console.c	/^removec(Console *c) {$/;"	f	file:
 rstk	include/headers/tty.h	/^	Message rstk[RSTK_SZ];$/;"	m	struct:Console
@@ -417,6 +417,7 @@ set_cr0	include/x86.h	/^set_cr0(uint32_t cr0) {$/;"	f
 set_cr3	include/x86.h	/^set_cr3(void *pdir) {$/;"	f
 set_gdt	include/x86.h	/^set_gdt(SegDesc *gdt, uint32_t size) {$/;"	f
 set_idt	include/x86.h	/^set_idt(GateDesc *idt, uint32_t size) {$/;"	f
+set_pid	src/lib/kthread.c	/^set_pid(PCB* pcb,pid_t pid){$/;"	f
 set_tr	include/x86.h	/^set_tr(uint16_t selector) {$/;"	f
 shentsize	boot/boot.h	/^	unsigned short shentsize;$/;"	m	struct:ELFHeader
 shft	src/drivers/tty/keyboard.c	/^static int caps, ctrl, alt, shft;$/;"	v	file:

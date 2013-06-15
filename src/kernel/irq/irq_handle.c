@@ -7,7 +7,7 @@ extern  PCB *current;
 boolean intr_flag;
 static int32_t nest_level;
 
-uint32_t isr_count=0;
+static uint32_t isr_count=0;
 volatile boolean need_sched=FALSE;
 
 static void (*do_timer_1) (void);
@@ -72,10 +72,9 @@ void irq_handle(TrapFrame *tf) {
 	intr_flag=FALSE;
 	
 }
-*/
 
+*/
 void irq_handle(TrapFrame *tf) {
-	
 	int i=1;
 	TrapFrame *temp;
 	int irq = tf->irq;
@@ -144,4 +143,3 @@ void irq_handle(TrapFrame *tf) {
 
 	
 }
-

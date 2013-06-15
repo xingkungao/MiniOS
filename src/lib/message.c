@@ -48,9 +48,7 @@ search_message(pid_t src_id,pid_t dst_id) {
 	return NULL;
 }
 static void 
-take_message(pid_t pid,Message *dst) {
-	assert(length_of_msgq());
-	Message *src=search_message(pid,current->pid);
+take_message(Message *src,Message *dst) {
 	Message *ptr=src;
 	assert(src!=NULL);
 	
@@ -59,6 +57,7 @@ take_message(pid_t pid,Message *dst) {
 	      *(ptr)=*(ptr+1);
 	rear--;
 }
+/*
 void 
 send(pid_t pid, Message *m){
 	m->src = current->pid;
@@ -66,8 +65,8 @@ send(pid_t pid, Message *m){
 	lock();
 	if (intr_flag)
 	      m->src = MSG_HWINTR;
-	if( m->src == MSG_HWINTR)
-	      printk("source is msg_hwintr\n");
+//	if( m->src == MSG_HWINTR)
+//	      printk("source is msg_hwintr\n");
 	PCB *pcb=find_pcb_pid(pid);
 	if( pcb == NULL )
 		panic("No pcb by this pid!\n");
@@ -104,3 +103,60 @@ receive(pid_t pid,Message *m){
 	}
 	unlock();
 }
+*/
+
+
+void 
+send(pid_t pid, Message *m){
+	m->src = current->pid;
+	m->dest = pid;
+	lock();
+
+	//Is this sent by interrupt?
+	if (intr_flag)
+	      m->src = MSG_HWINTR;
+
+	PCB *pcb=find_pcb_pid(pid);
+	if( pcb == NULL )
+		panic("No pcb by this pid!\n");
+
+	if( pcb->message.count <= -1 ){
+		if( pcb->message_addr->src == ANY || pcb->message_addr->src == m->src )
+	              copy_message(pcb->message_addr,m);
+		else
+		      put_message(m);
+	}
+	else{
+	      put_message(m);
+	}
+
+	V(&pcb->message);
+	NOINTR;
+	unlock();
+}
+
+void 
+receive(pid_t pid,Message *m){
+	lock();
+	NOINTR;
+	// there is some message in queue to be taken
+	if(current->message.count >= 1){
+		Message *msg=search_message(pid,current->pid);
+		if(NULL != msg)
+		      take_message(msg,m);
+		else{
+			current->message_addr=m;
+			current->message_addr->src=pid;
+		}
+
+		P(&current->message);
+		NOINTR;
+	}
+	else{
+		current->message_addr=m;
+		current->message_addr->src=pid;
+		P( &current->message);
+	}
+	unlock();
+}
+
