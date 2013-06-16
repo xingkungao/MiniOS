@@ -51,7 +51,6 @@ PCB* create_kthread(void *entry){
 	tf->cs=KSEL(SEG_KCODE);
 	tf->eflags=0x200;
 	tf->eip=(unsigned)entry;
-	printk("pid %d\n",newpcb->pid);
 	
 
 	
@@ -65,6 +64,7 @@ void schedule(void){
 	current=list_entry(current->runq.next,PCB,runq);
 	if(current == &pcb[0])
 		current=list_entry(current->runq.next,PCB,runq);
+
 }
 
 void sleep(void){
@@ -90,7 +90,6 @@ PCB* find_pcb_pid(pid_t pid){
 		if(pcb[i].pid == pid)
 		      return &pcb[i];
 	}
-	printk("not found pcb by pid");
 	return NULL;
 }
 PCB*

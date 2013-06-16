@@ -12,13 +12,11 @@ volatile boolean need_sched=FALSE;
 
 static void (*do_timer_1) (void);
 static void (*do_timer_2) (void);
-static void (*do_timer_3) (void);
-static void (*do_keyboard) (void);
-
+static void (*do_timer_3) (void); 
+static void (*do_keyboard) (void); 
 void add_irq_handle(uint32_t irq, void (*ptr)(void)){
 	assert(irq >= 0);
 	if(irq == 0) {
-	printk("%d\n",isr_count);
 		if(isr_count == 0)
 		      do_timer_1=ptr;
 		else if(isr_count == 1)
@@ -29,7 +27,6 @@ void add_irq_handle(uint32_t irq, void (*ptr)(void)){
 	}
 	if(irq == 1){
 	      do_keyboard=ptr;
-	      printk("add key \n");
 	}
 }
 /*
@@ -75,17 +72,12 @@ void irq_handle(TrapFrame *tf) {
 
 */
 void irq_handle(TrapFrame *tf) {
-	int i=1;
 	TrapFrame *temp;
 	int irq = tf->irq;
 	assert(irq >= 0);
 
 	cli();
 	nest_level++;
-	if(nest_level == 2)
-	      printk("					#######################################\n");
-	if(nest_level == 3)
-	      printk("					---------------------------------------\n");
 	intr_flag=TRUE;
 	current->tf = tf;
 	temp=current->tf;
@@ -97,17 +89,22 @@ void irq_handle(TrapFrame *tf) {
 		panic("unexpected exception");	
 	}
 	sti();
+	//pay attention to the protection of critical section 
+	//in ISR since nested interrupt is allowed.
+	
+
+
+	//In nested interrupt, schedule is never called for
+	//the protectoin of the excuting order.
 
 	if(irq == 0x80) {
 		cli();
-		printk("			int 80\n");
 		current->tf=temp;
 		if(nest_level == 1)
 		      schedule();
 	}
 
 	else if(irq == 1000) {
-		printk("			int time\n");
 		lock();
 		do_timer_1();
 		do_timer_2();
@@ -124,11 +121,6 @@ void irq_handle(TrapFrame *tf) {
 	}
 
 	else if (irq == 1001) {
-		while(i<10){
-		      printk("may the force be with me!\n");
-		      i++;
-		}
-		printk("				now comes a keyboard interrupt!\n");
 		do_keyboard();
 		cli();
 		current->tf=temp;

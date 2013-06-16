@@ -40,7 +40,6 @@ os_init(void) {
 	init_timer();
 	init_tty();
 	wakeup(set_pid(create_kthread(ttyd),TTY));
-	printk("next\n");
 	test();
 
 
@@ -60,7 +59,6 @@ entry(void) {
 
 void
 idle(void){
-	printk("\n\nnow excute idle!\n");
 	sti();
 	while (TRUE) {
 		wait_intr();
